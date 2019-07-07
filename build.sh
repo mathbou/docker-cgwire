@@ -45,9 +45,9 @@ fi
 
 if [ $INIT == 1 ]; then
     echo "INIT ZOU"
-    docker-compose exec zou-db su - postgres -c "createuser root"
-    docker-compose exec zou-db su - postgres -c "createdb -T template0 -E UTF8 --owner root root"
-    docker-compose exec zou-db  su - postgres -c "createdb -T template0 -E UTF8 --owner root zoudb"
+    docker-compose exec db su - postgres -c "createuser root"
+    docker-compose exec db su - postgres -c "createdb -T template0 -E UTF8 --owner root root"
+    docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner root zoudb"
     docker-compose exec zou-app sh init_zou.sh
 else
     echo "UPGRADE ZOU"
