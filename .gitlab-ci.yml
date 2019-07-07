@@ -6,11 +6,12 @@ build:
     before_script:
         - export KITSU_VERSION=0.10.10
         - export IMAGE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/kitsu:${KITSU_VERSION}
+        - export BUILD_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/kitsu:build
         - apk add --update py-pip && pip install docker-squash
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     script:
-        - docker build --build-arg KITSU_VERSION=${KITSU_VERSION} --pull -t "${IMAGE_NAME}" .
-        - docker-squash -t "${IMAGE_NAME}" -c "${IMAGE_NAME}"
-        - docker push "${IMAGE_NAME}"
+        - docker build --build-arg KITSU_VERSION=${KITSU_VERSION} --pull -t "${BUILD_NAME}" .
+        - docker-squash -t "${IMAGE_NAME}" -c "${BUILD_NAME}"
+        - docker push "${CI_REGISTRY_IMAGE}"
     only:
         - kitsu
