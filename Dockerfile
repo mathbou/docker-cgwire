@@ -6,7 +6,7 @@ ARG  KITSU_VERSION
 
 WORKDIR /opt
 
-RUN git clone -b ${KITSU_VERSION} --single-branch --depth 1 https://github.com/cgwire/kitsu
+RUN git clone -b "${KITSU_VERSION}-build" --single-branch --depth 1 https://github.com/cgwire/kitsu
 
 ENV ACME_AGREE="true"
 COPY Caddyfile /etc/Caddyfile
