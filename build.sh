@@ -33,7 +33,7 @@ if [ $BUILD == 1 ]; then
     docker-compose build --force-rm --pull --compress
 
     echo "START NEW CONTAINER"
-    docker-compose up -d -f docker-compose-build.yml
+    docker-compose -f docker-compose-build.yml up -d
 else
     echo "START NEW CONTAINER"
     docker-compose up -d
