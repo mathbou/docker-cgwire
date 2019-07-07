@@ -2,6 +2,8 @@
 
 Docker container for [Zou](https://zou.cg-wire.com/).
 
+[![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/zou/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry)
+
 ### About authors
 
 This Dockerfile is based on CG Wire work, a company based in France. They help small
