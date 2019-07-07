@@ -1,6 +1,6 @@
 # Docker-cgwire
 
-Docker compose for [Kitsu](https://kitsu.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/kitsu/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry) and [Zou](https://zou.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/zou/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry).
+Docker compose for [Kitsu](https://kitsu.cg-wire.com/) and [Zou](https://zou.cg-wire.com/)
 
 ### Usage
 
