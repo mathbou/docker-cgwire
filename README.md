@@ -4,27 +4,30 @@ Docker compose for [Kitsu](https://kitsu.cg-wire.com/) [![pipeline status](https
 
 ### Usage
 
-```bash
-bash build.sh
-```
-
-#### Launch and init Zou
+For the first launch
 
 ```bash
 bash build.sh -i
 ```
 
-#### Use local builded images
+Then
+
+```bash
+bash build.sh
+```
+
+#### Use local images
 
 ```bash
 bash get_build_dependencies.sh  #clone Kitsu and Zou Dockerfiles into subfolders
 
+# For the first launch
 bash build.sh -i -b 
-# or 
+# Then
 bash build.sh -b
 ```
 
-Default credentials:
+### Default credentials:
 
 * login: admin@example.com
 * password: mysecretpassword
