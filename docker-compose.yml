@@ -16,7 +16,7 @@ services:
         container_name: kitsu
         image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:$KITSU_VERSION
         environment:
-          - ACME_AGREE="true"
+          - ACME_AGREE=true
         links:
             - zou-app
         ports:
