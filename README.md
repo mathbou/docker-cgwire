@@ -1,32 +1,10 @@
-# Docker-cgwire
+# Docker-Kitsu
 
-Docker containers for [Kitsu](https://kitsu.cg-wire.com/) and [Zou](https://zou.cg-wire.com/).
-
-### Usage
-
-#### First launch
-
-The **-i/--init** flag init Zou and the database
-
-```bash
-bash build.sh -i
-```
-
-#### Standard launch
-
-```bash
-bash build.sh
-```
-
-Default credentials:
-
-* login: admin@example.com
-* password: mysecretpassword
-
+Docker container for [Kitsu](https://kitsu.cg-wire.com/).
 
 ### About authors
 
-Those Dockerfiles are based on CG Wire work, a company based in France. They help small
+This Dockerfile is based on CG Wire work, a company based in France. They help small
 to midsize CG studios to manage their production and build a pipeline
 efficiently.
 
@@ -37,4 +15,4 @@ software and focus more on  artistic work.
 
 Visit [cg-wire.com](https://cg-wire.com) for more information.
 
-[![CGWire Logo](https://zou.cg-wire.com/cgwire.png)](https://cgwire.com)
+[![Kitsu Logo](https://www.cg-wire.com/fr/images/kitsu.png)](https://kitsu.cg-wire.com/)
