@@ -12,6 +12,6 @@ build:
     script:
         - docker build --build-arg KITSU_VERSION=${KITSU_VERSION} --pull -t "${BUILD_NAME}" .
         - docker-squash -t "${IMAGE_NAME}" -c "${BUILD_NAME}"
-        - docker push "${CI_REGISTRY_IMAGE}"
+        - docker push "${IMAGE_NAME}"
     only:
         - kitsu
