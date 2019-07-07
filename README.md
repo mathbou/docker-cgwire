@@ -1,21 +1,27 @@
 # Docker-cgwire
 
-Docker containers for [Kitsu](https://kitsu.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/kitsu/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry) and [Zou](https://zou.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/zou/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry).
+Docker compose for [Kitsu](https://kitsu.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/kitsu/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry) and [Zou](https://zou.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/zou/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry).
 
 ### Usage
 
-#### First launch
+```bash
+bash build.sh
+```
 
-The **-i/--init** flag init Zou and the database
+#### Launch and init Zou
 
 ```bash
 bash build.sh -i
 ```
 
-#### Standard launch
+#### Use local builded images
 
 ```bash
-bash build.sh
+bash get_build_dependencies.sh  #clone Kitsu and Zou Dockerfiles into subfolders
+
+bash build.sh -i -b 
+# or 
+bash build.sh -b
 ```
 
 Default credentials:
