@@ -3,6 +3,7 @@
 echo "GET ARGS"
 
 INIT=0
+BUILD=0
 
 for i in "$@"
 do
@@ -10,6 +11,11 @@ case $i in
     -i | --init)
     INIT=1
     echo "INIT MODE ACTIVATED"
+    shift
+    ;;
+    -b | --build)
+    BUILD=1
+    echo "MAKE LOCAL BUILD"
     shift
     ;;
     *)
@@ -22,13 +28,20 @@ echo "STOP OLD CONTAINER"
 
 docker-compose down
 
-echo "BUILD CONTAINER"
+if [ $BUILD == 1 ]; then
+    echo "BUILD CONTAINER"
+     git clone -b kitsu --single-branch --depth 1 https://gitlab.com/mathbou/docker-cgwire.git ./kitsu || git -C ./kitsu pull
+     git clone -b zou --single-branch --depth 1 https://gitlab.com/mathbou/docker-cgwire.git ./zou || git -C ./zou pull
 
-docker-compose build --force-rm --pull --compress
+    docker-compose build --force-rm --pull --compress
 
-echo "START NEW CONTAINER"
+    echo "START NEW CONTAINER"
+    docker-compose up -d -f docker-compose-build.yml
+else
+    echo "START NEW CONTAINER"
+    docker-compose up -d
+fi
 
-docker-compose up -d
 
 if [ $INIT == 1 ]; then
     echo "INIT ZOU"
