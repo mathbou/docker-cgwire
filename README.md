@@ -2,6 +2,8 @@
 
 Docker container for [Kitsu](https://kitsu.cg-wire.com/).
 
+[![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/kitsu/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry)
+
 ### About authors
 
 This Dockerfile is based on CG Wire work, a company based in France. They help small
