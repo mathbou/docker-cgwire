@@ -25,7 +25,7 @@ services:
         container_name: kitsu
         image: kitsu:$KITSU_VERSION
         environment:
-          - ACME_AGREE="true"
+          - ACME_AGREE=true
         build:
             context: ./kitsu
             args:
