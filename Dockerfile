@@ -1,12 +1,16 @@
-FROM abiosoft/caddy:no-stats
+FROM nginx:alpine
 
 LABEL maintainer="Mathieu Bouzard <mathieu.bouzard@gmail.com>"
 
-ARG  KITSU_VERSION
+USER root
 
 WORKDIR /opt
 
-RUN git clone -b "${KITSU_VERSION}-build" --single-branch --depth 1 https://github.com/cgwire/kitsu
+RUN apk add --no-cache --virtual .build-deps git
 
-ENV ACME_AGREE="true"
-COPY Caddyfile /etc/Caddyfile
+ARG KITSU_VERSION
+
+RUN git clone -b ${KITSU_VERSION} --single-branch --depth 1 https://github.com/cgwire/kitsu\
+    && apk --purge del .build-deps
+
+COPY ./nginx.conf /etc/nginx/nginx.conf
