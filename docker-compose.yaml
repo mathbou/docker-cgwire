@@ -1,0 +1,74 @@
+version: '3.5'
+
+x-base: &base
+    restart: always
+    networks:
+        - cgwire
+
+x-env: &env
+    env_file:
+        - .env
+
+x-zou-build: &zou-build
+    image: zou:$ZOU_VERSION
+    build:
+        context: ./zou
+        args:
+            ZOU_VERSION: ${ZOU_VERSION}
+            PREVIEW_FOLDER: ${PREVIEW_FOLDER}
+            TMP_DIR: ${TMP_DIR}
+
+services:
+    kitsu:
+        <<: *base
+        <<: *env
+        container_name: kitsu
+        image: kitsu_caddy:$KITSU_VERSION
+        build:
+            context: ./kitsu_caddy
+            args:
+                KITSU_VERSION: ${KITSU_VERSION}
+        links:
+            - zou-app
+        ports:
+            - '80:80'
+
+    zou-app:
+        <<: *base
+        <<: *env
+        <<: *zou-build
+        container_name: zou-app
+        links:
+            - db
+            - zou-event
+        volumes:
+            - 'thumbnails:${PREVIEW_FOLDER}'
+        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
+
+    zou-event:
+        <<: *base
+        <<: *env
+        <<: *zou-build
+        container_name: zou-event
+        links:
+            - redis
+        command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
+
+    db:
+        container_name: zou-db
+        image: postgres:alpine
+        volumes:
+            - 'db:/var/lib/postgresql/data'
+        <<: *base
+
+    redis:
+        container_name: zou-redis
+        image: redis:alpine
+        <<: *base
+
+volumes:
+    db:
+    thumbnails:
+
+networks:
+    cgwire:
