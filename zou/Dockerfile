@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-LABEL maintainer "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
+LABEL maintainer="Mathieu Bouzard <mathieu.bouzard@gmail.com>"
 
 USER root
 
