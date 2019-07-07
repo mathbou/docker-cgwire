@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 echo "GET ARGS"
 
 INIT=0
