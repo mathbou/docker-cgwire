@@ -1,6 +1,6 @@
 # Docker-cgwire
 
-Docker containers for [Kitsu](https://kitsu.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/kitsu/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/commits/kitsu) and [Zou](https://zou.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/zou/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/commits/zou).
+Docker containers for [Kitsu](https://kitsu.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/kitsu/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry) and [Zou](https://zou.cg-wire.com/) [![pipeline status](https://gitlab.com/mathbou/docker-cgwire/badges/zou/pipeline.svg)](https://gitlab.com/mathbou/docker-cgwire/container_registry).
 
 ### Usage
 
