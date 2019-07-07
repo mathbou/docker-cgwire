@@ -1,0 +1,63 @@
+version: '3.5'
+
+x-base: &base
+    restart: always
+    networks:
+        - cgwire
+
+x-env: &env
+    env_file:
+        - .env
+
+services:
+    kitsu:
+        <<: *base
+        <<: *env
+        container_name: kitsu
+        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:$KITSU_VERSION
+        environment:
+          - ACME_AGREE=true
+        links:
+            - zou-app
+        ports:
+            - '80:80'
+
+    zou-app:
+        <<: *base
+        <<: *env
+        container_name: zou-app
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        links:
+            - db
+            - zou-event
+        volumes:
+            - 'thumbnails:${PREVIEW_FOLDER}'
+        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
+
+    zou-event:
+        <<: *base
+        <<: *env
+        container_name: zou-event
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        links:
+            - redis
+        command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
+
+    db:
+        container_name: zou-db
+        image: postgres:alpine
+        volumes:
+            - 'db:/var/lib/postgresql/data'
+        <<: *base
+
+    redis:
+        container_name: zou-redis
+        image: redis:alpine
+        <<: *base
+
+volumes:
+    db:
+    thumbnails:
+
+networks:
+    cgwire:
