@@ -12,7 +12,7 @@ build:
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     script:
         - docker build --build-arg ZOU_VERSION=${ZOU_VERSION} --pull -t "${BUILD_NAME}" .
-        - docker-squash -t "${IMAGE_NAME}" "${BUILD_NAME}"
+        - docker-squash -t "${IMAGE_NAME}" -c "${BUILD_NAME}"
         - docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
         - docker push "${BASE_NAME}"
     only:
