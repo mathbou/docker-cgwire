@@ -1,5 +1,7 @@
 FROM nginx:alpine
 
+LABEL maintainer "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
+
 USER root
 
 WORKDIR /opt
