@@ -33,7 +33,7 @@ services:
         links:
             - zou-app
         ports:
-            - '80:80'
+            - '${PORT}:80'
 
     zou-app:
         <<: *base
