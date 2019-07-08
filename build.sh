@@ -2,7 +2,7 @@
 
 
 function build_images() {
-    echo "${BLUE}BUILD CONTAINERS"
+    echo "${MAGENTA}BUILD CONTAINERS"
     if [ ! -e "./kitsu/Dockerfile" ] || [ ! -e "./zou/Dockerfile" ]; then
         echo "${ERROR}Kitsu and Zou Dockerfiles required"
         exit 1
@@ -12,7 +12,7 @@ function build_images() {
 
 
 function compose_up() {
-    echo "${LYELLOW}START CONTAINERS"
+    echo "${YELLOW}START CONTAINERS"
     if [ ${BUILD} == 1 ]; then
         docker-compose -f docker-compose-build.yml up -d
     else
@@ -22,13 +22,13 @@ function compose_up() {
 
 
 function compose_down() {
-    echo "${LYELLOW}STOP CONTAINERS"
+    echo "${YELLOW}STOP CONTAINERS"
     docker-compose down
 }
 
 
 function init_zou() {
-    echo "${LGREEN}INIT ZOU"
+    echo "${GREEN}INIT ZOU"
     docker-compose exec db su - postgres -c "createuser root"
     docker-compose exec db su - postgres -c "createdb -T template0 -E UTF8 --owner root root"
     docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner root zoudb"
@@ -37,7 +37,7 @@ function init_zou() {
 
 
 function upgrade_zou() {
-    echo "${LGREEN}UPGRADE ZOU"
+    echo "${GREEN}UPGRADE ZOU"
     docker-compose exec zou-app sh upgrade_zou.sh
 }
 
@@ -52,7 +52,7 @@ BUILD=0
 DOWN=0
 export ENV_FILE=./env
 
-echo "${LGREEN}PARSE ARGS"
+echo "${BLUE}PARSE ARGS"
 for i in "$@"; do
     case $i in
         -i | --init)
