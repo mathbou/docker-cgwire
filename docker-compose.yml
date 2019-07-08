@@ -7,7 +7,7 @@ x-base: &base
 
 x-env: &env
     env_file:
-        - .env
+        - ${ENV_FILE}
 
 services:
     kitsu:
