@@ -12,7 +12,7 @@ BUILD=0
 DOWN=0
 export ENV_FILE=./env
 
-echo "${LGREEN}GET ARGS${DEFAULT}"
+echo -e "${LGREEN}GET ARGS${DEFAULT}"
 for i in "$@"
 do
 case $i in
