@@ -15,8 +15,6 @@ services:
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-kitsu
         image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:$KITSU_VERSION
-        environment:
-          - ACME_AGREE=true
         links:
             - zou-app
         ports:
@@ -31,7 +29,7 @@ services:
             - db
             - zou-event
         volumes:
-            - 'thumbnails:${PREVIEW_FOLDER}'
+            - 'previews:${PREVIEW_FOLDER}'
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
@@ -63,8 +61,8 @@ volumes:
         name: ${COMPOSE_PROJECT_NAME}-db
     redis:
         name: ${COMPOSE_PROJECT_NAME}-redis
-    thumbnails:
-        name: ${COMPOSE_PROJECT_NAME}-thumbnails
+    previews:
+        name: ${COMPOSE_PROJECT_NAME}-previews
 
 networks:
     internal:

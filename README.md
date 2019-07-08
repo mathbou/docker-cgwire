@@ -2,7 +2,7 @@
 
 Docker compose for [Kitsu](https://kitsu.cg-wire.com/) and [Zou](https://zou.cg-wire.com/)
 
-### Usage
+## Usage
 
 ```bash
 bash build.sh
@@ -21,18 +21,33 @@ bash build.sh -b
 ```
     -i, --init              Init Zou and the database (Required for the first launch)
     -b, --build             Use local images
-    -e, --env=ENV_FILE      Set custom env file
+    -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
     -d, --down              Compose down the stack
     -h, --help              Show this help
 ```
 
-### Default credentials:
+## LDAP
+
+Add your [LDAP variables](https://zou.cg-wire.com/configuration/#ldap) to the env file.
+
+```bash
+bash ldap_sync.sh
+```
+
+#### LDAP flags
+
+```
+    -e, --env=ENV_FILE      Set custom env file, must be the same as the env used with build.sh
+    -h, --help              Show this help
+```
+
+## Default credentials:
 
 * login: admin@example.com
 * password: mysecretpassword
 
 
-### About authors
+## About authors
 
 Those Dockerfiles are based on CG Wire work, a company based in France. They help small
 to midsize CG studios to manage their production and build a pipeline
