@@ -3,7 +3,7 @@ version: '3.5'
 x-base: &base
     restart: always
     networks:
-        - cgwire
+        - internal
 
 x-env: &env
     env_file:
@@ -37,14 +37,14 @@ services:
     zou-event:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-event
+        container_name: ${COMPOSE_PROJECT_NAME}-event
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
         links:
             - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     db:
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-db
+        container_name: ${COMPOSE_PROJECT_NAME}-db
         image: postgres:alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
@@ -60,4 +60,4 @@ volumes:
     thumbnails:
 
 networks:
-    cgwire:
+    internal:
