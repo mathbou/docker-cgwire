@@ -67,7 +67,7 @@ services:
         container_name: ${COMPOSE_PROJECT_NAME}-redis
         image: redis:alpine
         volumes:
-          - 'redis:/data'
+            - 'redis:/data'
         <<: *base
 
 volumes:
