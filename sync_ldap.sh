@@ -7,7 +7,7 @@
 source ./common.sh
 export ENV_FILE=./env
 
-echo "${LGREEN}PARSE ARGS"
+echo "${BLUE}PARSE ARGS"
 for i in "$@"; do
     case $i in
         -e=* | --env=*)
@@ -41,5 +41,5 @@ done
 
 source_env ${ENV_FILE}
 
-echo "${CYAN}SYNC LDAP"
+echo "${GREEN}SYNC LDAP"
 docker-compose exec zou-app zou sync_with_ldap_server

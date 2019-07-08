@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-CYAN="\e[1;36m"
+CYAN="\e[1;96m"
 BLUE="\e[1;94m"
-LYELLOW="\e[1;93m"
-LGREEN="\e[1;92m"
-ERROR="\e[1;48;5;1m"
+MAGENTA="\e[1;95m"
+YELLOW="\e[1;93m"
+GREEN="\e[1;92m"
+ERROR="\e[1;97;48;5;1m"
 DEFAULT="\e[0;0;0m"
 
 
@@ -14,6 +15,14 @@ function echo() {
 
 
 function source_env() {
-    echo "${LGREEN}SOURCE ENV${DEFAULT}"
+    echo "${GREEN}SOURCE ENV${DEFAULT}"
     export $(grep -v '^#' $1 | xargs -L 1)
 }
+
+echo "${CYAN}truc"
+echo "${BLUE}truc"
+echo "${MAGENTA}truc"
+echo "${LYELLOW}truc"
+echo "${GREEN}truc"
+echo "${ERROR}truc"
+echo "${DEFAULT}truc"
