@@ -38,21 +38,23 @@ case $i in
     ;;
     -h | --help)
     echo "
+    Usage:
 
-    build.sh [options]
+        build.sh [options]
 
     Flags:
-    -i, --init              Init Zou and the database (Required for the first launch)
-    -b, --build             Use local images
-    -e, --env=ENV_FILE      Set custom env file
-    -d, --down              Compose down the stack
-    -h, --help              Show this help
 
+        -i, --init              Init Zou and the database (Required for the first launch)
+        -b, --build             Use local images
+        -e, --env=ENV_FILE      Set custom env file
+        -d, --down              Compose down the stack
+        -h, --help              Show this help
     "
+    exit 0
     ;;
     *)
-    echo "${ERROR}Invalid flag ${i} // Use -h or --help to print help${DEFAULT}"
-    shift
+    echo -e "${ERROR}Invalid flag ${i} // Use -h or --help to print help${DEFAULT}"
+    exit 1
     ;;
 esac
 done
