@@ -8,7 +8,7 @@ DEFAULT="\e[0;0;0m"
 
 INIT=0
 BUILD=0
-ENV_FILE=./env
+export ENV_FILE=./env
 
 echo "${LGREEN}GET ARGS${DEFAULT}"
 for i in "$@"
@@ -21,12 +21,12 @@ case $i in
     ;;
     -b | --build)
     BUILD=1
-    echo "${CYAN}USE LOCAL BUILD${DEFAULT}"
+    echo -e "${CYAN}USE LOCAL BUILD${DEFAULT}"
     shift
     ;;
     -e=* | --env=*)
-    ENV_FILE="${i#*=}"
-    echo "${CYAN}CUSTOM ENV FILE${DEFAULT}"
+    export ENV_FILE="${i#*=}"
+    echo -e "${CYAN}CUSTOM ENV FILE${DEFAULT}"
     shift
     ;;
     *)
@@ -36,22 +36,20 @@ esac
 done
 
 echo -e "${LGREEN}SOURCE ENV${DEFAULT}"
-source ${ENV_FILE}
-ENV=$(cat ${ENV_FILE})
-
+export $(grep -v '^#' ${ENV_FILE} | xargs -L 1)
 
 echo -e "${LYELLOW}STOP OLD CONTAINER${DEFAULT}"
 docker-compose down
 
 if [ $BUILD == 1 ]; then
     echo -e "${BLUE}BUILD CONTAINER${DEFAULT}"
-    env ${ENV} docker-compose build --force-rm --pull --compress
+    docker-compose build --force-rm --pull --compress
 
     echo -e "${LYELLOW}START NEW CONTAINER${DEFAULT}"
-    env ${ENV} docker-compose -f docker-compose-build.yml up -d
+    docker-compose -f docker-compose-build.yml up -d
 else
     echo -e "${LYELLOW}START NEW CONTAINER${DEFAULT}"
-    env ${ENV} docker-compose up -d
+    docker-compose up -d
 fi
 
 
