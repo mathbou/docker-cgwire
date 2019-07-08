@@ -18,11 +18,3 @@ function source_env() {
     echo "${GREEN}SOURCE ENV${DEFAULT}"
     export $(grep -v '^#' $1 | xargs -L 1)
 }
-
-echo "${CYAN}truc"
-echo "${BLUE}truc"
-echo "${MAGENTA}truc"
-echo "${LYELLOW}truc"
-echo "${GREEN}truc"
-echo "${ERROR}truc"
-echo "${DEFAULT}truc"
