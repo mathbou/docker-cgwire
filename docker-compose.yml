@@ -37,7 +37,7 @@ services:
     zou-event:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-event
+        container_name: ${COMPOSE_PROJECT_NAME}-zou-event
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
         links:
             - redis
@@ -51,7 +51,7 @@ services:
         <<: *base
 
     redis:
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-redis
+        container_name: ${COMPOSE_PROJECT_NAME}-redis
         image: redis:alpine
         <<: *base
 
