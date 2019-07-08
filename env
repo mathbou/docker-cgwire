@@ -5,3 +5,4 @@ KV_HOST=redis
 DB_HOST=db
 PREVIEW_FOLDER=/opt/zou/thumbnails
 TMP_DIR=/tmp/zou
+PORT=80
