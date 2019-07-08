@@ -23,7 +23,7 @@ for i in "$@"; do
 
     Flags:
 
-        -e, --env=ENV_FILE      Set custom env file
+        -e, --env=ENV_FILE      Set custom env file, must be the same as the env used with build.sh
         -h, --help              Show this help
             "
             exit 0

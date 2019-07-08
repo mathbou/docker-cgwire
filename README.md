@@ -26,6 +26,21 @@ bash build.sh -b
     -h, --help              Show this help
 ```
 
+#### LDAP
+
+Add your [LDAP variables](https://zou.cg-wire.com/configuration/#ldap) to the env file.
+
+```bash
+bash ldap_sync.sh
+```
+
+#### LDAP flags
+
+```
+    -e, --env=ENV_FILE      Set custom env file, must be the same as the env used with build.sh
+    -h, --help              Show this help
+```
+
 ### Default credentials:
 
 * login: admin@example.com
