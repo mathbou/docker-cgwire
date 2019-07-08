@@ -37,7 +37,7 @@ services:
     zou-event:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-event
+        container_name: ${COMPOSE_PROJECT_NAME}-zou-event
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
         links:
             - redis
@@ -45,19 +45,26 @@ services:
 
     db:
         container_name: ${COMPOSE_PROJECT_NAME}-db
-        image: postgres:alpine
+        image: postgres:9.5-alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
         <<: *base
 
     redis:
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-redis
+        container_name: ${COMPOSE_PROJECT_NAME}-redis
         image: redis:alpine
+        volumes:
+            - 'redis:/data'
         <<: *base
 
 volumes:
     db:
+        name: ${COMPOSE_PROJECT_NAME}-db
+    redis:
+        name: ${COMPOSE_PROJECT_NAME}-redis
     thumbnails:
+        name: ${COMPOSE_PROJECT_NAME}-thumbnails
 
 networks:
     internal:
+        name: ${COMPOSE_PROJECT_NAME}-internal
