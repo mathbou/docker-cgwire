@@ -31,7 +31,7 @@ services:
             - db
             - zou-event
         volumes:
-            - 'thumbnails:${PREVIEW_FOLDER}'
+            - 'previews:${PREVIEW_FOLDER}'
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
@@ -63,8 +63,8 @@ volumes:
         name: ${COMPOSE_PROJECT_NAME}-db
     redis:
         name: ${COMPOSE_PROJECT_NAME}-redis
-    thumbnails:
-        name: ${COMPOSE_PROJECT_NAME}-thumbnails
+    previews:
+        name: ${COMPOSE_PROJECT_NAME}-previews
 
 networks:
     internal:
