@@ -4,14 +4,6 @@ Docker compose for [Kitsu](https://kitsu.cg-wire.com/) and [Zou](https://zou.cg-
 
 ### Usage
 
-For the first launch
-
-```bash
-bash build.sh -i
-```
-
-Then
-
 ```bash
 bash build.sh
 ```
@@ -21,11 +13,15 @@ bash build.sh
 ```bash
 bash get_build_dependencies.sh  #clone Kitsu and Zou Dockerfiles into subfolders
 
-# For the first launch
-bash build.sh -i -b 
-# Then
-bash build.sh -b
+bash build.sh -b 
 ```
+
+#### Flags
+
+- -i/--init: Init Zou and the database (required for the first launch)
+- -b/--build: Use local images
+- -e=*/--env=*: Set a custom env file 
+
 
 ### Default credentials:
 
