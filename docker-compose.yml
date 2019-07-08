@@ -48,6 +48,7 @@ services:
         image: postgres:9.5-alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
+            - ./pg_ctl.conf:/etc/postgresql/9.5/main/pg_ctl.conf:ro
         <<: *base
 
     redis:
