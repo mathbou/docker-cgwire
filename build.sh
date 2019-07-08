@@ -1,21 +1,32 @@
 #!/usr/bin/env bash
 
-echo "GET ARGS"
+CYAN="\e[1;36m"
+BLUE="\e[1;34m"
+LYELLOW="\e[1;93m"
+LGREEN="\e[1;92m"
+DEFAULT="\e[0;0;0m"
 
 INIT=0
 BUILD=0
+export ENV_FILE=./env
 
+echo "${LGREEN}GET ARGS${DEFAULT}"
 for i in "$@"
 do
 case $i in
     -i | --init)
     INIT=1
-    echo "INIT MODE ACTIVATED"
+    echo -e "${CYAN}INIT MODE ACTIVATED${DEFAULT}"
     shift
     ;;
     -b | --build)
     BUILD=1
-    echo "MAKE LOCAL BUILD"
+    echo -e "${CYAN}USE LOCAL BUILD${DEFAULT}"
+    shift
+    ;;
+    -e=* | --env=*)
+    export ENV_FILE="${i#*=}"
+    echo -e "${CYAN}CUSTOM ENV FILE${DEFAULT}"
     shift
     ;;
     *)
@@ -24,29 +35,31 @@ case $i in
 esac
 done
 
-echo "STOP OLD CONTAINER"
+echo -e "${LGREEN}SOURCE ENV${DEFAULT}"
+export $(grep -v '^#' ${ENV_FILE} | xargs -L 1)
 
+echo -e "${LYELLOW}STOP OLD CONTAINER${DEFAULT}"
 docker-compose down
 
 if [ $BUILD == 1 ]; then
-    echo "BUILD CONTAINER"
+    echo -e "${BLUE}BUILD CONTAINER${DEFAULT}"
     docker-compose build --force-rm --pull --compress
 
-    echo "START NEW CONTAINER"
+    echo -e "${LYELLOW}START NEW CONTAINER${DEFAULT}"
     docker-compose -f docker-compose-build.yml up -d
 else
-    echo "START NEW CONTAINER"
+    echo -e "${LYELLOW}START NEW CONTAINER${DEFAULT}"
     docker-compose up -d
 fi
 
 
 if [ $INIT == 1 ]; then
-    echo "INIT ZOU"
+    echo -e "${LGREEN}INIT ZOU${DEFAULT}"
     docker-compose exec db su - postgres -c "createuser root"
     docker-compose exec db su - postgres -c "createdb -T template0 -E UTF8 --owner root root"
     docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner root zoudb"
     docker-compose exec zou-app sh init_zou.sh
 else
-    echo "UPGRADE ZOU"
+    echo -e "${LGREEN}UPGRADE ZOU${DEFAULT}"
     docker-compose exec zou-app sh upgrade_zou.sh
 fi

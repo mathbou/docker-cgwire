@@ -3,11 +3,11 @@ version: '3.5'
 x-base: &base
     restart: always
     networks:
-        - cgwire
+        - internal
 
 x-env: &env
     env_file:
-        - .env
+        - ${ENV_FILE}
 
 x-zou-build: &zou-build
     image: zou:$ZOU_VERSION
@@ -22,7 +22,7 @@ services:
     kitsu:
         <<: *base
         <<: *env
-        container_name: kitsu
+        container_name: ${COMPOSE_PROJECT_NAME}-kitsu
         image: kitsu:$KITSU_VERSION
         environment:
           - ACME_AGREE=true
@@ -39,7 +39,7 @@ services:
         <<: *base
         <<: *env
         <<: *zou-build
-        container_name: zou-app
+        container_name: ${COMPOSE_PROJECT_NAME}-zou-app
         links:
             - db
             - zou-event
@@ -51,20 +51,20 @@ services:
         <<: *base
         <<: *env
         <<: *zou-build
-        container_name: zou-event
+        container_name: ${COMPOSE_PROJECT_NAME}-zou-event
         links:
             - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     db:
-        container_name: zou-db
+        container_name: ${COMPOSE_PROJECT_NAME}-db
         image: postgres:alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
         <<: *base
 
     redis:
-        container_name: zou-redis
+        container_name: ${COMPOSE_PROJECT_NAME}-redis
         image: redis:alpine
         <<: *base
 
@@ -73,4 +73,4 @@ volumes:
     thumbnails:
 
 networks:
-    cgwire:
+    internal:
