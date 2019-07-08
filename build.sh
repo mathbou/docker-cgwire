@@ -37,19 +37,21 @@ done
 
 echo -e "${LGREEN}SOURCE ENV${DEFAULT}"
 source ${ENV_FILE}
+ENV=$(cat ${ENV_FILE})
+
 
 echo -e "${LYELLOW}STOP OLD CONTAINER${DEFAULT}"
 docker-compose down
 
 if [ $BUILD == 1 ]; then
     echo -e "${BLUE}BUILD CONTAINER${DEFAULT}"
-    docker-compose build --force-rm --pull --compress
+    env ${ENV} docker-compose build --force-rm --pull --compress
 
     echo -e "${LYELLOW}START NEW CONTAINER${DEFAULT}"
-    docker-compose -f docker-compose-build.yml up -d
+    env ${ENV} docker-compose -f docker-compose-build.yml up -d
 else
     echo -e "${LYELLOW}START NEW CONTAINER${DEFAULT}"
-    docker-compose up -d
+    env ${ENV} docker-compose up -d
 fi
 
 
