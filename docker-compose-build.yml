@@ -66,11 +66,15 @@ services:
     redis:
         container_name: ${COMPOSE_PROJECT_NAME}-redis
         image: redis:alpine
+        volumes:
+          - 'redis:/data'
         <<: *base
 
 volumes:
     db:
         name: ${COMPOSE_PROJECT_NAME}-db
+    redis:
+        name: ${COMPOSE_PROJECT_NAME}-redis
     thumbnails:
         name: ${COMPOSE_PROJECT_NAME}-thumbnails
 
