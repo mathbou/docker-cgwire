@@ -3,6 +3,6 @@ KITSU_VERSION=0.10.10
 ZOU_VERSION=0.10.14
 KV_HOST=redis
 DB_HOST=db
-PREVIEW_FOLDER=/opt/zou/thumbnails
+PREVIEW_FOLDER=/opt/zou/previews
 TMP_DIR=/tmp/zou
 PORT=80
