@@ -29,6 +29,7 @@ function compose_down() {
 
 function init_zou() {
     echo "${GREEN}INIT ZOU"
+    sleep 2
     docker-compose exec db su - postgres -c "createuser root"
     docker-compose exec db su - postgres -c "createdb -T template0 -E UTF8 --owner root root"
     docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner root zoudb"
