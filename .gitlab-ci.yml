@@ -4,7 +4,7 @@ build:
     services:
         - docker:dind
     before_script:
-        - export KITSU_VERSION=0.10.10
+        - export KITSU_VERSION=0.10.11
         - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/kitsu
         - export IMAGE_NAME=${BASE_NAME}:${KITSU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-build
