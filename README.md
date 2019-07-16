@@ -46,7 +46,6 @@ bash ldap_sync.sh
 * login: admin@example.com
 * password: mysecretpassword
 
-
 ## About authors
 
 Those Dockerfiles are based on CG Wire work, a company based in France. They help small
