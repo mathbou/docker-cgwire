@@ -15,13 +15,13 @@ build:
             curl https://gitlab.com/api/v4/projects/13202331/registry/repositories/625011/tags > tags.json
             export CURRENT_VERSION=`cat ./tags.json | jq '.[-2].name'`
             rm tags.json
+        - echo KITSU VERSION is $KITSU_VERSION // LAST BUILD is $CURRENT_VERSION
+        - if [ $CURRENT_VERSION == $KITSU_VERSION ]; then exit 0; fi
         - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/kitsu
         - export IMAGE_NAME=${BASE_NAME}:${KITSU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-build
         - apk add --update py-pip && pip install docker-squash
     script:
-        - echo KITSU VERSION is $KITSU_VERSION // LAST BUILD is $CURRENT_VERSION
-        - if [ $CURRENT_VERSION == $KITSU_VERSION ]; then exit 0; fi
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
         - docker build --build-arg KITSU_VERSION=${KITSU_VERSION} --pull -t "${BUILD_NAME}" .
         - docker-squash -t "${IMAGE_NAME}" -c "${BUILD_NAME}"
