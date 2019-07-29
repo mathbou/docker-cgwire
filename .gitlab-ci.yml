@@ -4,13 +4,23 @@ build:
     services:
         - docker:dind
     before_script:
-        - export ZOU_VERSION=0.10.20
+        - |
+            if [ ! $ZOU_VERSION ]; then
+                apk add curl jq
+                curl https://api.github.com/repos/cgwire/zou/tags > tags.json
+                export ZOU_VERSION=`cat ./tags.json | jq '.[0].name[1:]'`
+            fi
+        - |
+            curl https://gitlab.com/api/v4/projects/13202331/registry/repositories/625021/tags > tags.json
+            export CURRENT_VERSION=`cat ./tags.json | jq '.[-2].name'`
+        - echo ZOU VERSION is $ZOU_VERSION // LAST BUILD is $CURRENT_VERSION
+        - if [ $CURRENT_VERSION == $ZOU_VERSION ]; then exit 0; fi
         - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/zou
         - export IMAGE_NAME=${BASE_NAME}:${ZOU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-layered
         - apk add --update py-pip && pip install docker-squash
-        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     script:
+        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
         - docker build --build-arg ZOU_VERSION=${ZOU_VERSION} --pull -t "${BUILD_NAME}" .
         - docker-squash -t "${IMAGE_NAME}" -c "${BUILD_NAME}"
         - docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
