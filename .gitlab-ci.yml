@@ -4,7 +4,13 @@ build:
     services:
         - docker:dind
     before_script:
-        - export KITSU_VERSION=0.10.16
+        - |
+            if [ ! $KITSU_VERSION ]; then
+                apk add curl jq
+                curl https://api.github.com/repos/cgwire/kitsu/events > events.json
+                KITSU_VERSION=`cat ./events.json | jq '.[].payload.ref | select(. | test("-build$")?)[:-6]' | grep -m1 ""`
+                rm events.json
+        - echo KITSU VERSION is $KITSU_VERSION
         - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/kitsu
         - export IMAGE_NAME=${BASE_NAME}:${KITSU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-build
