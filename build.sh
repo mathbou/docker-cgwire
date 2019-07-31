@@ -16,6 +16,7 @@ function compose_up() {
     if [ ${BUILD} == 1 ]; then
         docker-compose -f docker-compose-build.yml up -d
     else
+        docker-compose pull --include-deps
         docker-compose up -d
     fi
 }
