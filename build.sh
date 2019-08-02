@@ -7,7 +7,7 @@ function build_images() {
         echo "${ERROR}Kitsu and Zou Dockerfiles required"
         exit 1
     fi
-    docker-compose build --force-rm --pull --compress
+    docker-compose -f docker-compose-build.yml build --force-rm --pull --compress
 }
 
 
