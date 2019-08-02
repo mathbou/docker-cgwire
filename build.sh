@@ -7,7 +7,7 @@ function build_images() {
         echo "${ERROR}Kitsu and Zou Dockerfiles required"
         exit 1
     fi
-    docker-compose build --force-rm --pull --compress
+    docker-compose -f docker-compose-build.yml build --force-rm --pull --compress
 }
 
 
@@ -62,7 +62,7 @@ for i in "$@"; do
             echo "${CYAN}INIT MODE ACTIVATED"
             shift
             ;;
-        -b | --build)
+        -l | --local)
             BUILD=1
             echo "${CYAN}USE LOCAL BUILD"
             shift
@@ -86,7 +86,7 @@ for i in "$@"; do
     Flags:
 
         -i, --init              Init Zou and the database (Required for the first launch)
-        -b, --build             Use local images
+        -l, --local             Use local images
         -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
         -d, --down              Compose down the stack
         -h, --help              Show this help
