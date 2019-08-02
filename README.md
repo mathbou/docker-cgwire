@@ -13,14 +13,14 @@ bash build.sh
 ```bash
 bash get_build_dependencies.sh  #clone Kitsu and Zou Dockerfiles into subfolders
 
-bash build.sh -b 
+bash build.sh -l 
 ```
 
 #### Flags:
 
 ```
     -i, --init              Init Zou and the database (Required for the first launch)
-    -b, --build             Use local images
+    -l, --local             Use local images
     -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
     -d, --down              Compose down the stack
     -h, --help              Show this help
