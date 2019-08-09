@@ -8,12 +8,12 @@ build:
             if [ ! $KITSU_VERSION ]; then
                 apk add curl jq
                 curl https://api.github.com/repos/cgwire/kitsu/events > events.json
-                export KITSU_VERSION=`cat ./events.json | jq '.[].payload.ref | select(. | test("-build$")?)[:-6]' | grep -m1 ""`
+                export KITSU_VERSION=`cat ./events.json | jq -r '.[].payload.ref | select(. | test("-build$")?)[:-6]' | grep -m1 ""`
                 rm events.json
             fi
         - |
             curl https://gitlab.com/api/v4/projects/13202331/registry/repositories/625011/tags > tags.json
-            export CURRENT_VERSION=`cat ./tags.json | jq '.[-2].name'`
+            export CURRENT_VERSION=`cat ./tags.json | jq -r '.[-2].name'`
             rm tags.json
         - echo KITSU VERSION is $KITSU_VERSION // LAST BUILD is $CURRENT_VERSION
         - if [ $CURRENT_VERSION == $KITSU_VERSION ]; then exit 0; fi
