@@ -4,9 +4,9 @@ build:
     services:
         - docker:dind
     before_script:
+        - apk add curl jq
         - |
             if [ ! $KITSU_VERSION ]; then
-                apk add curl jq
                 curl https://api.github.com/repos/cgwire/kitsu/events > events.json
                 export KITSU_VERSION=`cat ./events.json | jq -r '.[].payload.ref | select(. | test("-build$")?)[:-6]' | grep -m1 ""`
                 rm events.json
