@@ -10,6 +10,8 @@ build:
                 curl https://api.github.com/repos/cgwire/kitsu/events > events.json
                 export KITSU_VERSION=`cat ./events.json | jq -r '.[].payload.ref | select(. | test("-build$")?)[:-6]' | grep -m1 ""`
                 rm events.json
+            else
+                export MANUAL=1
             fi
         - |
             curl https://gitlab.com/api/v4/projects/13202331/registry/repositories/625011/tags > tags.json
@@ -25,7 +27,11 @@ build:
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
         - docker build --build-arg KITSU_VERSION=${KITSU_VERSION} --pull -t "${BUILD_NAME}" .
         - docker-squash -t "${IMAGE_NAME}" -c "${BUILD_NAME}"
-        - docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
+        - |
+            if [ ! $MANUAL ]; then
+                echo Update 'latest' tag
+                docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
+            fi
         - docker push "${BASE_NAME}"
     only:
         - kitsu
