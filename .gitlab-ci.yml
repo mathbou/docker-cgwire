@@ -35,7 +35,7 @@ build:
         - docker push "${BASE_NAME}"
     only:
         variables:
-            - $CI_COMMIT_REF_NAME == kitsu
+            - $CI_COMMIT_REF_NAME == "kitsu"
         refs:
             - web
             - schedules
