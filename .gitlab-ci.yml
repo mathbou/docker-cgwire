@@ -33,7 +33,7 @@ build:
         - docker push "${BASE_NAME}"
     only:
         variables:
-            - $CI_COMMIT_REF_NAME == zou
+            - $CI_COMMIT_REF_NAME == "zou"
         refs:
             - web
             - schedules
