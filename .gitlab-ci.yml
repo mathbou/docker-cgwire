@@ -9,6 +9,7 @@ build:
             if [ ! $ZOU_VERSION ]; then
                 curl https://api.github.com/repos/cgwire/zou/tags > tags.json
                 export ZOU_VERSION=`cat ./tags.json | jq -r '.[0].name[1:]'`
+            else
                 export MANUAL=1
             fi
         - |
