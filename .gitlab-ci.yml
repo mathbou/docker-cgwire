@@ -9,6 +9,7 @@ build:
             if [ ! $ZOU_VERSION ]; then
                 curl https://api.github.com/repos/cgwire/zou/tags > tags.json
                 export ZOU_VERSION=`cat ./tags.json | jq -r '.[0].name[1:]'`
+                export MANUAL=1
             fi
         - |
             curl https://gitlab.com/api/v4/projects/13202331/registry/repositories/625021/tags > tags.json
@@ -23,7 +24,11 @@ build:
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
         - docker build --build-arg ZOU_VERSION=${ZOU_VERSION} --pull -t "${BUILD_NAME}" .
         - docker-squash -t "${IMAGE_NAME}" -c "${BUILD_NAME}"
-        - docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
+        - |
+            if [ ! $MANUAL ]; then
+                echo Update 'latest' tag
+                docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
+            fi
         - docker push "${BASE_NAME}"
     only:
         - zou
