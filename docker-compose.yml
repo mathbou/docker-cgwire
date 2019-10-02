@@ -15,8 +15,10 @@ services:
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-kitsu
         image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:$KITSU_VERSION
-        links:
+        depends_on:
             - zou-app
+            - zou-event
+            - zou-jobs
         ports:
             - '${PORT}:80'
 
@@ -25,9 +27,8 @@ services:
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-zou-app
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
-        links:
-            - db
-            - zou-event
+        depends_on:
+          - db
         volumes:
             - 'previews:${PREVIEW_FOLDER}'
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
@@ -37,8 +38,8 @@ services:
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-zou-event
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
-        links:
-            - redis
+        depends_on:
+          - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     db:

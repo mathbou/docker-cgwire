@@ -28,8 +28,10 @@ services:
             context: ./kitsu
             args:
                 KITSU_VERSION: ${KITSU_VERSION}
-        links:
+        depends_on:
             - zou-app
+            - zou-event
+            - zou-jobs
         ports:
             - '${PORT}:80'
 
@@ -38,9 +40,8 @@ services:
         <<: *env
         <<: *zou-build
         container_name: ${COMPOSE_PROJECT_NAME}-zou-app
-        links:
+        depends_on:
             - db
-            - zou-event
         volumes:
             - 'previews:${PREVIEW_FOLDER}'
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
@@ -50,7 +51,7 @@ services:
         <<: *env
         <<: *zou-build
         container_name: ${COMPOSE_PROJECT_NAME}-zou-event
-        links:
+        depends_on:
             - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
