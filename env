@@ -6,6 +6,7 @@ ZOU_VERSION=latest
 KV_HOST=redis
 DB_HOST=db
 
+ENABLE_JOB_QUEUE=True
 PREVIEW_FOLDER=/opt/zou/previews
 TMP_DIR=/tmp/zou
 
