@@ -60,6 +60,8 @@ services:
         <<: *env
         <<: *zou-build
         container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
+        volumes:
+            - 'previews:${PREVIEW_FOLDER}'
         command: "rq worker -c zou.job_settings"
 
     db:
