@@ -55,6 +55,13 @@ services:
             - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
+    zou-jobs:
+        <<: *base
+        <<: *env
+        <<: *zou-build
+        container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
+        command: "rq worker -c zou.job_settings"
+
     db:
         container_name: ${COMPOSE_PROJECT_NAME}-db
         image: postgres:9.5-alpine
