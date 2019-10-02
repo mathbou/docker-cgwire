@@ -9,14 +9,20 @@ x-env: &env
     env_file:
         - ${ENV_FILE}
 
+x-previews: &previews
+    volumes:
+        - 'previews:${PREVIEW_FOLDER}'
+
 services:
     kitsu:
         <<: *base
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-kitsu
         image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:$KITSU_VERSION
-        links:
+        depends_on:
             - zou-app
+            - zou-event
+            - zou-jobs
         ports:
             - '${PORT}:80'
 
@@ -25,11 +31,9 @@ services:
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-zou-app
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
-        links:
-            - db
-            - zou-event
-        volumes:
-            - 'previews:${PREVIEW_FOLDER}'
+        depends_on:
+          - db
+        <<: *previews
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
@@ -37,24 +41,32 @@ services:
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-zou-event
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
-        links:
-            - redis
+        depends_on:
+          - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
+    zou-jobs:
+        <<: *base
+        <<: *env
+        container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        <<: *previews
+        command: "rq worker -c zou.job_settings"
+
     db:
+        <<: *base
         container_name: ${COMPOSE_PROJECT_NAME}-db
         image: postgres:9.5-alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
             - ./pg_ctl.conf:/etc/postgresql/9.5/main/pg_ctl.conf:ro
-        <<: *base
 
     redis:
+        <<: *base
         container_name: ${COMPOSE_PROJECT_NAME}-redis
         image: redis:alpine
         volumes:
             - 'redis:/data'
-        <<: *base
 
 volumes:
     db:

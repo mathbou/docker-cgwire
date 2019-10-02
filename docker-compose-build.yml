@@ -9,6 +9,10 @@ x-env: &env
     env_file:
         - ${ENV_FILE}
 
+x-previews: &previews
+    volumes:
+        - 'previews:${PREVIEW_FOLDER}'
+
 x-zou-build: &zou-build
     image: zou:$ZOU_VERSION
     build:
@@ -28,8 +32,10 @@ services:
             context: ./kitsu
             args:
                 KITSU_VERSION: ${KITSU_VERSION}
-        links:
+        depends_on:
             - zou-app
+            - zou-event
+            - zou-jobs
         ports:
             - '${PORT}:80'
 
@@ -38,11 +44,9 @@ services:
         <<: *env
         <<: *zou-build
         container_name: ${COMPOSE_PROJECT_NAME}-zou-app
-        links:
+        depends_on:
             - db
-            - zou-event
-        volumes:
-            - 'previews:${PREVIEW_FOLDER}'
+        <<: *previews
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
@@ -50,23 +54,32 @@ services:
         <<: *env
         <<: *zou-build
         container_name: ${COMPOSE_PROJECT_NAME}-zou-event
-        links:
+        depends_on:
             - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
+    zou-jobs:
+        <<: *base
+        <<: *env
+        <<: *zou-build
+        container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
+        <<: *previews
+        command: "rq worker -c zou.job_settings"
+
     db:
+        <<: *base
         container_name: ${COMPOSE_PROJECT_NAME}-db
         image: postgres:9.5-alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
-        <<: *base
+            - ./pg_ctl.conf:/etc/postgresql/9.5/main/pg_ctl.conf:ro
 
     redis:
+        <<: *base
         container_name: ${COMPOSE_PROJECT_NAME}-redis
         image: redis:alpine
         volumes:
             - 'redis:/data'
-        <<: *base
 
 volumes:
     db:
