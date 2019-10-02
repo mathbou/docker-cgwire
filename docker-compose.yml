@@ -47,6 +47,8 @@ services:
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        volumes:
+            - 'previews:${PREVIEW_FOLDER}'
         command: "rq worker -c zou.job_settings"
 
     db:
