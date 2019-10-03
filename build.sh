@@ -32,6 +32,10 @@ function compose_up() {
         docker-compose pull --include-deps
         docker-compose up -d
     fi
+    if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
+        echo "DISABLE ZOU ASYNC JOBS"
+        docker stop "${COMPOSE_PROJECT_NAME}-zou-jobs"
+    fi
 }
 
 
