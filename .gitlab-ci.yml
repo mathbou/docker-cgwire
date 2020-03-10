@@ -16,7 +16,7 @@ build:
             curl https://gitlab.com/api/v4/projects/13202331/registry/repositories?tags=1 > tags.json
             export CURRENT_VERSION=`cat ./tags.json | jq -r '.[1].tags|sort_by(.name | split(".") | map(tonumber?))[-1].name'`
         - echo ZOU VERSION is $ZOU_VERSION // LAST BUILD is $CURRENT_VERSION // Manual Build: $MANUAL
-        - [ $CURRENT_VERSION == $ZOU_VERSION ] && [ ! $MANUAL ] && exit 0
+        - if [ $CURRENT_VERSION == $ZOU_VERSION ] && [ ! $MANUAL ]; then exit 0; fi
         - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/zou
         - export IMAGE_NAME=${BASE_NAME}:${ZOU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-layered
