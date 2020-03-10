@@ -14,11 +14,11 @@ build:
                 export MANUAL=1
             fi
         - |
-            curl https://gitlab.com/api/v4/projects/13202331/registry/repositories/625011/tags > tags.json
-            export CURRENT_VERSION=`cat ./tags.json | jq -r '.[-2].name'`
+            curl https://gitlab.com/api/v4/projects/13202331/registry/repositories?tags=1 > tags.json
+            export CURRENT_VERSION=`cat ./tags.json | jq -r '.[0].tags|sort_by(.name | split(".") | map(tonumber?))[-1].name'`
             rm tags.json
-        - echo KITSU VERSION is $KITSU_VERSION // LAST BUILD is $CURRENT_VERSION
-        - if [ $CURRENT_VERSION == $KITSU_VERSION ]; then exit 0; fi
+        - echo KITSU VERSION is $KITSU_VERSION // LAST BUILD is $CURRENT_VERSION // Manual Build=$MANUAL
+        - if [ $CURRENT_VERSION == $KITSU_VERSION ] && [ ! $MANUAL ]; then exit 0; fi
         - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/kitsu
         - export IMAGE_NAME=${BASE_NAME}:${KITSU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-build
