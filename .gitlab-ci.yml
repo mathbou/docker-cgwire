@@ -33,7 +33,7 @@ build:
                 docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
                 arg="image_url=https://img.shields.io/static/v1?label=Kitsu%20Version&message=${KITSU_VERSION}&color=blue"
                 url="https://gitlab.com/api/v4/projects/13202331/badges/42951"
-                curl --request PUT --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN}" --data-urlencode $arg $url
+                curl --request PUT --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" --data-urlencode $arg $url
             fi
         - docker push "${BASE_NAME}"
     only:
