@@ -1,7 +1,7 @@
 stages:
     - build
     - test
-    
+
 services:
         - docker:dind
         
@@ -66,6 +66,5 @@ container_scanning:
             - schedules
     variables:
         CI_APPLICATION_REPOSITORY: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
-        GIT_STRATEGY: fetch
     before_script:
         - export CI_APPLICATION_TAG=`cat zou_version`
