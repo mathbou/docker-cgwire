@@ -17,10 +17,10 @@ build:
             if [ ! $ZOU_VERSION ]; then
                 curl https://api.github.com/repos/cgwire/zou/tags > tags.json
                 export ZOU_VERSION=`cat ./tags.json | jq -r '.[0].name[1:]'`
-                echo $ZOU_VERSION > zou_version
             else
                 export MANUAL=1
             fi
+            echo $ZOU_VERSION > zou_version
         - |
             curl https://gitlab.com/api/v4/projects/13202331/registry/repositories?tags=1 > tags.json
             export CURRENT_VERSION=`cat ./tags.json | jq -r '.[1].tags|sort_by(.name | split(".") | map(tonumber?))[-1].name'`
