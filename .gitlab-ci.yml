@@ -1,8 +1,16 @@
+stages:
+    - build
+    - test
+
+services:
+        - docker:dind
+
 build:
     image: docker:latest
     stage: build
-    services:
-        - docker:dind
+    cache:
+        paths:
+            - kitsu_version
     before_script:
         - apk add curl jq
         - |
@@ -13,13 +21,17 @@ build:
             else
                 export MANUAL=1
             fi
+            echo $KITSU_VERSION > kitsu_version
         - |
             curl https://gitlab.com/api/v4/projects/13202331/registry/repositories?tags=1 > tags.json
             export CURRENT_VERSION=`cat ./tags.json | jq -r '.[0].tags|sort_by(.name | split(".") | map(tonumber?))[-1].name'`
             rm tags.json
         - echo KITSU VERSION is $KITSU_VERSION // LAST BUILD is $CURRENT_VERSION // Manual Build=$MANUAL
-        - if [ $CURRENT_VERSION == $KITSU_VERSION ] && [ ! $MANUAL ]; then exit 0; fi
-        - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/kitsu
+        - |
+            if [ $CURRENT_VERSION == $KITSU_VERSION ] && [ ! $MANUAL ]; then
+                curl --request POST --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/jobs/${CI_JOB_ID}/cancel"
+            fi
+        - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
         - export IMAGE_NAME=${BASE_NAME}:${KITSU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-build
         - apk add --update py-pip && pip install docker-squash
@@ -42,3 +54,19 @@ build:
         refs:
             - web
             - schedules
+            
+include:
+    - template: Container-Scanning.gitlab-ci.yml
+    
+container_scanning:
+    cache:
+        paths:
+            - kitsu_version
+    only:
+        refs:
+            - web
+            - schedules
+    variables:
+        CI_APPLICATION_REPOSITORY: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+    before_script:
+        - export CI_APPLICATION_TAG=`cat kitsu_version`
