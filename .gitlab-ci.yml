@@ -25,7 +25,7 @@ build:
             if [ $CURRENT_VERSION == $ZOU_VERSION ] && [ ! $MANUAL ]; then
                 curl --request POST --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/jobs/${CI_JOB_ID}/cancel"
             fi
-        - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/zou
+        - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
         - export IMAGE_NAME=${BASE_NAME}:${ZOU_VERSION}
         - export BUILD_NAME=${IMAGE_NAME}-layered
         - apk add --update py-pip && pip install docker-squash
@@ -51,3 +51,12 @@ build:
             
 include:
     - template: Container-Scanning.gitlab-ci.yml
+    
+container_scanning:
+    only:
+        refs:
+            - web
+            - schedules
+    variables:
+        CI_APPLICATION_REPOSITORY: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+        CI_APPLICATION_TAG: latest
