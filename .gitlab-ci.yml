@@ -8,12 +8,16 @@ services:
 build:
     image: docker:latest
     stage: build
+    cache:
+        paths:
+            - zou_version
     before_script:
         - apk add curl jq
         - |
             if [ ! $ZOU_VERSION ]; then
                 curl https://api.github.com/repos/cgwire/zou/tags > tags.json
                 export ZOU_VERSION=`cat ./tags.json | jq -r '.[0].name[1:]'`
+                echo $ZOU_VERSION > zou_version
             else
                 export MANUAL=1
             fi
@@ -53,11 +57,15 @@ include:
     - template: Container-Scanning.gitlab-ci.yml
     
 container_scanning:
+    cache:
+        paths:
+            - zou_version
     only:
         refs:
             - web
             - schedules
     variables:
         CI_APPLICATION_REPOSITORY: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
-        CI_APPLICATION_TAG: latest
         GIT_STRATEGY: fetch
+    before_script:
+        - export CI_APPLICATION_TAG=`cat zou_version`
