@@ -60,3 +60,4 @@ container_scanning:
     variables:
         CI_APPLICATION_REPOSITORY: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
         CI_APPLICATION_TAG: latest
+        GIT_STRATEGY: fetch
