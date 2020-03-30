@@ -41,7 +41,7 @@ build:
             if [ ! $MANUAL ]; then
                 echo Update 'latest' tag
                 docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
-                arg="image_url=https://img.shields.io/static/v1?label=Zou%20Version&message=${ZOU_VERSION}&color=blue"
+                arg="image_url=https://badgen.net/badge/Zou%20Version/${ZOU_VERSION//./%2E}/blue?icon=docker"
                 url="https://gitlab.com/api/v4/projects/13202331/badges/42950"
                 curl --request PUT --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" --data-urlencode $arg $url
             fi
