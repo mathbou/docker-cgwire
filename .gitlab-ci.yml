@@ -46,24 +46,22 @@ build:
                 curl --request PUT --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" --data-urlencode $arg $url
             fi
         - docker push "${BASE_NAME}"
-    only:
-        variables:
-            - $CI_COMMIT_REF_NAME == "zou"
-        refs:
-            - web
-            - schedules
+    rules:  
+        - if: '$CI_COMMIT_REF_NAME == "zou" && $CI_PIPELINE_SOURCE == "web"'
+        - if: '$CI_COMMIT_REF_NAME == "zou" && $CI_PIPELINE_SOURCE == "schedules"'
+       
             
 include:
     - template: Container-Scanning.gitlab-ci.yml
+    
     
 container_scanning:
     cache:
         paths:
             - zou_version
-    only:
-        refs:
-            - web
-            - schedules
+    rules:  
+        - if: '$CI_COMMIT_REF_NAME == "zou" && $CI_PIPELINE_SOURCE == "web"'
+        - if: '$CI_COMMIT_REF_NAME == "zou" && $CI_PIPELINE_SOURCE == "schedules"'
     variables:
         CI_APPLICATION_REPOSITORY: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
     before_script:
