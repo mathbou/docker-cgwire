@@ -50,9 +50,7 @@ build:
         - docker push "${BASE_NAME}"
     rules:  
         - if: '$CI_COMMIT_REF_NAME == "kitsu" && $CI_PIPELINE_SOURCE == "web"'
-          when: always
         - if: '$CI_COMMIT_REF_NAME == "kitsu" && $CI_PIPELINE_SOURCE == "schedules"'
-          when: always
             
 include:
     - template: Container-Scanning.gitlab-ci.yml
@@ -63,9 +61,7 @@ container_scanning:
             - kitsu_version
     rules:  
         - if: '$CI_COMMIT_REF_NAME == "kitsu" && $CI_PIPELINE_SOURCE == "web"'
-          when: on_success
         - if: '$CI_COMMIT_REF_NAME == "kitsu" && $CI_PIPELINE_SOURCE == "schedules"'
-          when: on_success
     variables:
         CI_APPLICATION_REPOSITORY: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
     before_script:
