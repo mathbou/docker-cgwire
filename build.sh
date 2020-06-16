@@ -4,8 +4,8 @@
 function build_images() {
     echo "${MAGENTA}BUILD CONTAINERS"
 
-    command -v curl 1>/dev/null || { echo "${ERROR}curl required" && exit 1 }
-    command -v jq 1>/dev/null || { echo "${ERROR}jq required" && exit 1 }
+    command -v curl 1>/dev/null || { echo "${ERROR}curl required" && exit 1; }
+    command -v jq 1>/dev/null || { echo "${ERROR}jq required" && exit 1; }
 
     if [[ $KITSU_VERSION == "latest" ]]; then
         export KITSU_VERSION=`curl https://api.github.com/repos/cgwire/kitsu/commits | jq -r '.[].commit.message | select(. | test("[0-9]+(\\\\.[0-9]+)+"))?' | grep -m1 ""`
