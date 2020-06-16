@@ -20,14 +20,14 @@ function build_images() {
         echo "${ERROR}Kitsu and Zou Dockerfiles required"
         exit 1
     fi
-    docker-compose -f docker-compose-build.yml build --force-rm --pull --compress
+    docker-compose -f docker-compose.yml -f docker-compose.build.yml build --force-rm --pull --compress
 }
 
 
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if [ ${BUILD} == 1 ]; then
-        docker-compose -f docker-compose-build.yml up -d
+        docker-compose -f docker-compose.yml -f docker-compose.build.yml up -d
     else
         docker-compose pull --include-deps
         docker-compose up -d
