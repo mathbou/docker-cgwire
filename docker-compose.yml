@@ -61,7 +61,7 @@ services:
             - 'db:/var/lib/postgresql/data'
             - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
         environment:
-            - POSTGRES_HOST_AUTH_METHOD=trust
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
 
     redis:
         <<: *base
