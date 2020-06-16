@@ -60,11 +60,6 @@ services:
         volumes:
             - 'db:/var/lib/postgresql/data'
             - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
-        environment:
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-            - POSTGRES_USER=${DB_USER}
-            - POSTGRES_DB=${DB_DATABASE}
-
 
     redis:
         <<: *base
