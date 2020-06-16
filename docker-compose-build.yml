@@ -68,11 +68,11 @@ services:
 
     db:
         <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME}-db
-        image: postgres:9.5-alpine
+        container_name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
+        image: postgres:${DB_VERSION}-alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
-            - ./db/pg_ctl.conf:/etc/postgresql/9.5/main/pg_ctl.conf:ro
+            - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
 
     redis:
         <<: *base
@@ -83,7 +83,7 @@ services:
 
 volumes:
     db:
-        name: ${COMPOSE_PROJECT_NAME}-db
+        name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
     redis:
         name: ${COMPOSE_PROJECT_NAME}-redis
     previews:

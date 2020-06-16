@@ -13,3 +13,5 @@ TMP_DIR=/tmp/zou
 EVENT_STREAM_HOST=zou-event
 
 PORT=80
+
+DB_VERSION=9.5
