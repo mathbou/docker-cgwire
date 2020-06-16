@@ -34,7 +34,7 @@ function compose_up() {
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
-        docker stop "${COMPOSE_PROJECT_NAME}-zou-jobs"
+        docker-compose stop zou-jobs
     fi
 }
 
