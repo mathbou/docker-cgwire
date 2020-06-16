@@ -56,10 +56,10 @@ if [ $DRY == 1 ]; then
 else
     echo "Wet Run"
     bash ./build.sh -d -e=${ENV_FILE}
-    docker-compose -f docker-compose-upgrade.yml up -d
+    docker-compose -f docker-compose.dbUpgrade.yml up -d
 
-    docker-compose -f docker-compose-upgrade.yml exec -T old-db pg_dumpall -U postgres > dump.sql
-    docker-compose -f docker-compose-upgrade.yml exec -T new-db psql -U postgres < dump.sql
+    docker-compose -f docker-compose.dbUpgrade.yml -T old-db pg_dumpall -U postgres > dump.sql
+    docker-compose -f docker-compose.dbUpgrade.yml -T new-db psql -U postgres < dump.sql
 
-    docker-compose -f docker-compose-upgrade.yml down
+    docker-compose -f docker-compose.dbUpgrade.yml down
 fi
