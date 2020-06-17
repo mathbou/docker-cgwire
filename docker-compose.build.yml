@@ -1,17 +1,5 @@
 version: '3.5'
 
-x-base: &base
-    restart: always
-    networks:
-        - internal
-
-x-env: &env
-    env_file:
-        - ${ENV_FILE}
-
-x-previews: &previews
-    volumes:
-        - 'previews:${PREVIEW_FOLDER}'
 
 x-zou-build: &zou-build
     image: zou:$ZOU_VERSION
@@ -24,73 +12,17 @@ x-zou-build: &zou-build
 
 services:
     kitsu:
-        <<: *base
-        <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-kitsu
         image: kitsu:$KITSU_VERSION
         build:
             context: ./kitsu
             args:
                 KITSU_VERSION: ${KITSU_VERSION}
-        depends_on:
-            - zou-app
-            - zou-event
-            - zou-jobs
-        ports:
-            - '${PORT}:80'
 
     zou-app:
-        <<: *base
-        <<: *env
         <<: *zou-build
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-app
-        depends_on:
-            - db
-        <<: *previews
-        command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
-        <<: *base
-        <<: *env
         <<: *zou-build
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-event
-        depends_on:
-            - redis
-        command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
-
+       
     zou-jobs:
-        <<: *base
-        <<: *env
         <<: *zou-build
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
-        <<: *previews
-        command: "rq worker -c zou.job_settings"
-
-    db:
-        <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
-        image: postgres:${DB_VERSION}-alpine
-        volumes:
-            - 'db:/var/lib/postgresql/data'
-            - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
-        environment:
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-
-    redis:
-        <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME}-redis
-        image: redis:alpine
-        volumes:
-            - 'redis:/data'
-
-volumes:
-    db:
-        name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
-    redis:
-        name: ${COMPOSE_PROJECT_NAME}-redis
-    previews:
-        name: ${COMPOSE_PROJECT_NAME}-previews
-
-networks:
-    internal:
-        name: ${COMPOSE_PROJECT_NAME}-internal
