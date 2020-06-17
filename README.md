@@ -41,6 +41,28 @@ bash ldap_sync.sh
     -h, --help              Show this help
 ```
 
+## DB Upgrade
+
+**[- Be sure to backup your datas before upgrading. -]**
+
+```bash
+# bash db_upgrade [options] oldDbVersion newDbVersion
+
+# PostgreSql 9.5 to 11
+
+bash db_upgrade 9.5 11
+```
+
+Don't forget to update the DB_VERSION key in your 'env' file **after** the upgrade. 
+
+#### DB Upgrade flags
+
+```
+    -e, --env=ENV_FILE      Set custom env file, must be the same as the env used with build.sh
+    -d, --dry-run           
+    -h, --help              Show this help
+```
+
 ## Default credentials:
 
 * login: admin@example.com

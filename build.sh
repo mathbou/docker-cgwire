@@ -4,8 +4,8 @@
 function build_images() {
     echo "${MAGENTA}BUILD CONTAINERS"
 
-    command -v curl 1>/dev/null || ( echo "${ERROR}curl required" && exit 1 )
-    command -v jq 1>/dev/null || ( echo "${ERROR}jq required" && exit 1 )
+    command -v curl 1>/dev/null || { echo "${ERROR}curl required" && exit 1; }
+    command -v jq 1>/dev/null || { echo "${ERROR}jq required" && exit 1; }
 
     if [[ $KITSU_VERSION == "latest" ]]; then
         export KITSU_VERSION=`curl https://api.github.com/repos/cgwire/kitsu/commits | jq -r '.[].commit.message | select(. | test("[0-9]+(\\\\.[0-9]+)+"))?' | grep -m1 ""`
@@ -20,21 +20,21 @@ function build_images() {
         echo "${ERROR}Kitsu and Zou Dockerfiles required"
         exit 1
     fi
-    docker-compose -f docker-compose-build.yml build --force-rm --pull --compress
+    docker-compose -f docker-compose.yml -f docker-compose.build.yml build --force-rm --pull --compress
 }
 
 
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if [ ${BUILD} == 1 ]; then
-        docker-compose -f docker-compose-build.yml up -d
+        docker-compose -f docker-compose.yml -f docker-compose.build.yml up -d
     else
         docker-compose pull --include-deps
         docker-compose up -d
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
-        docker stop "${COMPOSE_PROJECT_NAME}-zou-jobs"
+        docker-compose stop zou-jobs
     fi
 }
 
@@ -48,9 +48,7 @@ function compose_down() {
 function init_zou() {
     echo "${GREEN}INIT ZOU"
     sleep 2
-    docker-compose exec db su - postgres -c "createuser root"
-    docker-compose exec db su - postgres -c "createdb -T template0 -E UTF8 --owner root root"
-    docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner root zoudb"
+    docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner postgres zoudb"
     docker-compose exec zou-app sh init_zou.sh
 }
 

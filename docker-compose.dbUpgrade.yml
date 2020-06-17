@@ -1,0 +1,34 @@
+version: '3.5'
+
+x-base: &base
+    restart: always
+    networks:
+        - internal
+
+services:
+    old-db:
+        <<: *base
+        container_name: ${COMPOSE_PROJECT_NAME}-db-${OLD_VERSION}
+        image: postgres:${OLD_VERSION}-alpine
+        volumes:
+            - 'oldDb:/var/lib/postgresql/data'
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+    new-db:
+        <<: *base
+        container_name: ${COMPOSE_PROJECT_NAME}-db-${NEW_VERSION}
+        image: postgres:${NEW_VERSION}-alpine
+        volumes:
+            - 'newDb:/var/lib/postgresql/data'
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+
+volumes:
+    oldDb:
+        name: ${COMPOSE_PROJECT_NAME}-db-${OLD_VERSION}
+    newDb:
+        name: ${COMPOSE_PROJECT_NAME}-db-${NEW_VERSION}
+
+networks:
+    internal:
+        name: ${COMPOSE_PROJECT_NAME}-internal
