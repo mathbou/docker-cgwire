@@ -43,10 +43,7 @@ bash ldap_sync.sh
 
 ## DB Upgrade
 
-<div class="alert alert-danger">
-Be sure to backup your datas before upgrading.
-</div>
-
+**[- Be sure to backup your datas before upgrading. -]**
 
 ```bash
 # bash db_upgrade [options] oldDbVersion newDbVersion
@@ -56,7 +53,7 @@ Be sure to backup your datas before upgrading.
 bash db_upgrade 9.5 11
 ```
 
-Don't forget update the DB_VERSION key in your 'env' file **after** the upgrade. 
+Don't forget to update the DB_VERSION key in your 'env' file **after** the upgrade. 
 
 #### DB Upgrade flags
 
