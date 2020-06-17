@@ -51,15 +51,18 @@ fi
 
 source_env ${ENV_FILE}
 
+bash ./build.sh -d -e=${ENV_FILE}
+docker-compose -f docker-compose.dbUpgrade.yml up -d
+
 if [ $DRY == 1 ]; then
-    echo "Dry run: $OLD_VERSION to $NEW_VERSION // env:${ENV_FILE}"
+    echo "${MAGENTA}Dry dump from $OLD_VERSION"
+    echo "${MAGENTA}Dry import to $NEW_VERSION"
 else
-    echo "Wet Run"
-    bash ./build.sh -d -e=${ENV_FILE}
-    docker-compose -f docker-compose.dbUpgrade.yml up -d
-
+    echo "${GREEN}Dump from $OLD_VERSION"
     docker-compose -f docker-compose.dbUpgrade.yml -T old-db pg_dumpall -U postgres > dump.sql
-    docker-compose -f docker-compose.dbUpgrade.yml -T new-db psql -U postgres < dump.sql
 
-    docker-compose -f docker-compose.dbUpgrade.yml down
+    echo "${GREEN}Import to $NEW_VERSION"
+    docker-compose -f docker-compose.dbUpgrade.yml -T new-db psql -U postgres < dump.sql
 fi
+
+docker-compose -f docker-compose.dbUpgrade.yml down
