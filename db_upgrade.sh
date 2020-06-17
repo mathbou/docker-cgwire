@@ -59,10 +59,10 @@ if [ $DRY == 1 ]; then
     echo "${MAGENTA}Dry import to $NEW_VERSION"
 else
     echo "${GREEN}Dump from $OLD_VERSION"
-    docker-compose -f docker-compose.dbUpgrade.yml -T old-db pg_dumpall -U postgres > dump.sql
+    docker-compose -f docker-compose.dbUpgrade.yml exec -T old-db pg_dumpall -U postgres > dump.sql
 
     echo "${GREEN}Import to $NEW_VERSION"
-    docker-compose -f docker-compose.dbUpgrade.yml -T new-db psql -U postgres < dump.sql
+    docker-compose -f docker-compose.dbUpgrade.yml exec -T new-db psql -U postgres < dump.sql
 fi
 
 docker-compose -f docker-compose.dbUpgrade.yml down
