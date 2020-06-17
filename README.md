@@ -43,8 +43,9 @@ bash ldap_sync.sh
 
 ## DB Upgrade
 
+<div class="alert alert-danger">
 Be sure to backup your datas before upgrading.
-{: .alert .alert-danger}
+</div>
 
 
 ```bash
