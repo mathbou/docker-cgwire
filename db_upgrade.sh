@@ -19,7 +19,7 @@ for i in "$@"; do
             echo "
     Usage:
 
-        build.sh [options]
+        $0 [options] OldDbVersion NewDbVersion
 
     Flags:
         -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
