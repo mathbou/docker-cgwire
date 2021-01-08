@@ -15,9 +15,9 @@ build:
         - apk add curl jq
         - |
             if [ ! $KITSU_VERSION ]; then
-                curl https://api.github.com/repos/cgwire/kitsu/events > events.json
-                export KITSU_VERSION=`cat ./events.json | jq -r '.[].payload.ref | select(. | test("-build$")?)[:-6]' | grep -m1 ""`
-                rm events.json
+                curl https://api.github.com/repos/cgwire/kitsu/git/refs/tags > tags.json
+                export KITSU_VERSION=`cat ./tags.json | jq '.[-1].ref' | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+"`
+                rm tags.json
             else
                 export MANUAL=1
             fi
