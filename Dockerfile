@@ -5,7 +5,7 @@ LABEL maintainer="Mathieu Bouzard <mathieu.bouzard@gmail.com>"
 USER root
 
 RUN apk add --no-cache ffmpeg bzip2 postgresql-libs postgresql-client\
-    && apk add --no-cache --virtual .build-deps make jpeg-dev zlib-dev musl-dev gcc libffi-dev postgresql-dev
+    && apk add --no-cache --virtual .build-deps make jpeg-dev zlib-dev musl-dev gcc g++ libffi-dev postgresql-dev
 
 ARG ZOU_VERSION
 
