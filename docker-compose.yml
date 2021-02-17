@@ -41,7 +41,7 @@ services:
         <<: *base
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
@@ -50,7 +50,7 @@ services:
         <<: *base
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         <<: *backend_volumes
         command: "rq worker -c zou.job_settings"
 
