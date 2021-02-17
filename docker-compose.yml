@@ -19,7 +19,7 @@ services:
         <<: *base
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
-        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:$KITSU_VERSION
+        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:${KITSU_VERSION:-latest}
         depends_on:
             - zou-app
             - zou-event
@@ -31,7 +31,7 @@ services:
         <<: *base
         <<: *env
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
         <<: *backend_volumes
