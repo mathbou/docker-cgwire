@@ -11,8 +11,8 @@ x-env: &env
 
 x-backend-volumes: &backend_volumes
     volumes:
-        - 'previews:${PREVIEW_FOLDER}'
-        - 'tmp:/tmp/zou'
+        - 'previews:${PREVIEW_FOLDER:-/opt/zou/previews}'
+        - 'tmp:${TMP_DIR:-/tmp/zou}'
 
 services:
     kitsu:
