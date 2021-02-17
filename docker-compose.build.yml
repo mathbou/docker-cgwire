@@ -2,21 +2,21 @@ version: '3.5'
 
 
 x-zou-build: &zou-build
-    image: zou:$ZOU_VERSION
+    image: zou:${ZOU_VERSION:-latest}
     build:
         context: ./zou
         args:
-            ZOU_VERSION: ${ZOU_VERSION}
-            PREVIEW_FOLDER: ${PREVIEW_FOLDER}
-            TMP_DIR: ${TMP_DIR}
+            ZOU_VERSION: ${ZOU_VERSION:-latest}
+            PREVIEW_FOLDER: ${PREVIEW_FOLDER:?}
+            TMP_DIR: ${TMP_DIR:-/tmp/zou}
 
 services:
     kitsu:
-        image: kitsu:$KITSU_VERSION
+        image: kitsu:${KITSU_VERSION:-latest}
         build:
             context: ./kitsu
             args:
-                KITSU_VERSION: ${KITSU_VERSION}
+                KITSU_VERSION: ${KITSU_VERSION:-latest}
 
     zou-app:
         <<: *zou-build
