@@ -7,31 +7,31 @@ x-base: &base
 
 x-env: &env
     env_file:
-        - ${ENV_FILE}
+        - ${ENV_FILE:-./env}
 
 x-backend-volumes: &backend_volumes
     volumes:
-        - 'previews:${PREVIEW_FOLDER}'
-        - 'tmp:/tmp/zou'
+        - 'previews:${PREVIEW_FOLDER:?}'
+        - 'tmp:${TMP_DIR:-/tmp/zou}'
 
 services:
     kitsu:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-kitsu
-        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:$KITSU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
+        image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:${KITSU_VERSION:-latest}
         depends_on:
             - zou-app
             - zou-event
             - zou-jobs
         ports:
-            - '${PORT}:80'
+            - '${PORT:-80}:80'
 
     zou-app:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-app
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
         <<: *backend_volumes
@@ -40,8 +40,8 @@ services:
     zou-event:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-event
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
@@ -49,38 +49,38 @@ services:
     zou-jobs:
         <<: *base
         <<: *env
-        container_name: ${COMPOSE_PROJECT_NAME}-zou-jobs
-        image: registry.gitlab.com/mathbou/docker-cgwire/zou:$ZOU_VERSION
+        container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
+        image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         <<: *backend_volumes
         command: "rq worker -c zou.job_settings"
 
     db:
         <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
-        image: postgres:${DB_VERSION}-alpine
+        container_name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
+        image: postgres:${DB_VERSION:?}-alpine
         volumes:
             - 'db:/var/lib/postgresql/data'
-            - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION}/main/pg_ctl.conf:ro
+            - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION:?}/main/pg_ctl.conf:ro
         environment:
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_PASSWORD=${DB_PASSWORD:?}
 
     redis:
         <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME}-redis
+        container_name: ${COMPOSE_PROJECT_NAME:?}-redis
         image: redis:alpine
         volumes:
             - 'redis:/data'
 
 volumes:
     db:
-        name: ${COMPOSE_PROJECT_NAME}-db-${DB_VERSION}
+        name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
     redis:
-        name: ${COMPOSE_PROJECT_NAME}-redis
+        name: ${COMPOSE_PROJECT_NAME:?}-redis
     previews:
-        name: ${COMPOSE_PROJECT_NAME}-previews
+        name: ${COMPOSE_PROJECT_NAME:?}-previews
     tmp:
-        name: ${COMPOSE_PROJECT_NAME}-tmp
+        name: ${COMPOSE_PROJECT_NAME:?}-tmp
         
 networks:
     internal:
-        name: ${COMPOSE_PROJECT_NAME}-internal
+        name: ${COMPOSE_PROJECT_NAME:?}-internal
