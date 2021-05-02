@@ -49,20 +49,36 @@ fi
 # ---------------------------- MAIN ----------------------------
 # --------------------------------------------------------------
 
+
+function db-compose() {
+    docker-compose -f docker-compose.dbUpgrade.yml "$@"
+}
+
 source_env ${ENV_FILE}
 
-bash ./build.sh -d -e=${ENV_FILE}
-docker-compose -f docker-compose.dbUpgrade.yml up -d
+bash ./build.sh -d -e=${ENV_FILE} 
+db-compose up -d
+
+sleep 1
+
+until db-compose exec -T old-db pg_isready ; do
+	sleep 3
+	echo "${YELLOW}waiting for old-db..."	
+done
+until db-compose exec -T new-db pg_isready ; do
+	sleep 3
+	echo "${YELLOW}waiting for new-db..."	
+done
 
 if [ $DRY == 1 ]; then
     echo "${MAGENTA}Dry dump from $OLD_VERSION"
     echo "${MAGENTA}Dry import to $NEW_VERSION"
 else
     echo "${GREEN}Dump from $OLD_VERSION"
-    docker-compose -f docker-compose.dbUpgrade.yml exec -T old-db pg_dumpall -U postgres > dump.sql
+    db-compose exec -T old-db pg_dumpall -U postgres > dump.sql
 
     echo "${GREEN}Import to $NEW_VERSION"
-    docker-compose -f docker-compose.dbUpgrade.yml exec -T new-db psql -U postgres < dump.sql
+    db-compose exec -T new-db psql -U postgres < dump.sql
 fi
 
-docker-compose -f docker-compose.dbUpgrade.yml down
+db-compose down

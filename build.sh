@@ -36,6 +36,11 @@ function compose_up() {
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
         docker-compose stop zou-jobs
     fi
+
+    until docker-compose exec -T db pg_isready ; do
+        sleep 3
+        echo "${YELLOW}Waiting for db..."
+    done
 }
 
 
