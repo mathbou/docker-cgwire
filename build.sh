@@ -36,7 +36,7 @@ function compose_up() {
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
         docker-compose stop zou-jobs
     fi
-
+    
     until docker-compose exec -T db pg_isready ; do
         sleep 3
         echo "${YELLOW}Waiting for db..."
@@ -51,16 +51,17 @@ function compose_down() {
 
 
 function init_zou() {
-    echo "${GREEN}INIT ZOU"
-    sleep 2
-    docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner postgres zoudb"
-    docker-compose exec zou-app sh init_zou.sh
-}
-
-
-function upgrade_zou() {
-    echo "${GREEN}UPGRADE ZOU"
-    docker-compose exec zou-app sh upgrade_zou.sh
+    dbowner=postgres
+    dbname=zoudb
+    
+    if docker-compose exec db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
+        echo "${GREEN}UPGRADE ZOU"
+        docker-compose exec zou-app sh upgrade_zou.sh
+    else
+        echo "${GREEN}INIT ZOU"
+        docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        docker-compose exec zou-app sh init_zou.sh
+    fi
 }
 
 # --------------------------------------------------------------
@@ -69,7 +70,6 @@ function upgrade_zou() {
 
 source common.sh
 
-INIT=0
 BUILD=0
 DOWN=0
 export ENV_FILE=./env
@@ -77,11 +77,6 @@ export ENV_FILE=./env
 echo "${BLUE}PARSE ARGS"
 for i in "$@"; do
     case $i in
-        -i | --init)
-            INIT=1
-            echo "${CYAN}INIT MODE ACTIVATED"
-            shift
-            ;;
         -l | --local)
             BUILD=1
             echo "${CYAN}USE LOCAL BUILD"
@@ -105,7 +100,6 @@ for i in "$@"; do
 
     Flags:
 
-        -i, --init              Init Zou and the database (Required for the first launch)
         -l, --local             Use local images
         -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
         -d, --down              Compose down the stack
@@ -133,10 +127,5 @@ if [ $DOWN == 0 ]; then
     fi
 
     compose_up
-
-    if [ $INIT == 1 ]; then
-        init_zou
-    else
-        upgrade_zou
-    fi
+    init_zou
 fi

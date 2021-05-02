@@ -19,7 +19,6 @@ bash build.sh -l
 #### Flags:
 
 ```
-    -i, --init              Init Zou and the database (Required for the first launch)
     -l, --local             Use local images
     -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
     -d, --down              Compose down the stack
