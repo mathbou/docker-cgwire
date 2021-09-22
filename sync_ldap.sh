@@ -42,4 +42,4 @@ done
 source_env ${ENV_FILE}
 
 echo "${GREEN}SYNC LDAP"
-docker-compose exec zou-app zou sync_with_ldap_server
+docker-compose exec zou-app zou sync-with-ldap-server
