@@ -1,0 +1,45 @@
+# syntax=docker/dockerfile:1.3
+
+ARG PY_V=3.7
+ARG ZOU_FOLDER=/zou-dev
+
+FROM python:${PY_V}-alpine as builder
+USER root
+
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add make jpeg-dev zlib-dev musl-dev gcc g++ libffi-dev postgresql-dev
+
+ARG PY_V
+ARG ZOU_FOLDER
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=bind,rw,source=./zou-dev,target=$ZOU_FOLDER \
+    pip install --upgrade pip wheel setuptools \
+    && cd $ZOU_FOLDER \
+    && pip install -e . \
+    && python setup.py egg_info --egg-base=/usr/local/lib/python${PY_V}/site-packages
+
+FROM python:${PY_V}-alpine
+MAINTAINER "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
+USER root
+
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add ffmpeg bzip2 postgresql-libs postgresql-client
+
+ARG PY_V
+
+COPY --from=builder /usr/local/lib/python${PY_V} /usr/local/lib/python${PY_V}
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+ARG ZOU_FOLDER
+
+
+ENV DEBUG 1
+ENV MAIL_DEBUG 1
+ENV FLASK_DEBUG 1
+ENV FLASK_APP zou.app
+
+WORKDIR ${ZOU_FOLDER}
+
+COPY init_zou.sh /init_zou.sh
+COPY upgrade_zou.sh /upgrade_zou.sh
