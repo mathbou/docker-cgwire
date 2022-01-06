@@ -13,6 +13,7 @@ build:
             - kitsu_version
     before_script:
         - apk add curl jq
+        - PROJECT_API_URL=$CI_API_V4_URL/projects/$CI_PROJECT_ID
         - |
             if [ ! $KITSU_VERSION ]; then
                 curl https://api.github.com/repos/cgwire/kitsu/git/refs/tags > tags.json
@@ -23,13 +24,13 @@ build:
             fi
             echo $KITSU_VERSION > kitsu_version
         - |
-            curl https://gitlab.com/api/v4/projects/13202331/registry/repositories?tags=1 > tags.json
+            curl $PROJECT_API_URL/registry/repositories?tags=1 > tags.json
             export CURRENT_VERSION=`cat ./tags.json | jq -r '.[0].tags|sort_by(.name | split(".") | map(tonumber?))[-1].name'`
             rm tags.json
         - echo KITSU VERSION is $KITSU_VERSION // LAST BUILD is $CURRENT_VERSION // Manual Build=$MANUAL
         - |
             if [ $CURRENT_VERSION == $KITSU_VERSION ] && [ ! $MANUAL ]; then
-                curl --request POST --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/jobs/${CI_JOB_ID}/cancel"
+                curl --request POST --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" "$PROJECT_API_URL/jobs/${CI_JOB_ID}/cancel"
             fi
         - export BASE_NAME=${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
         - export IMAGE_NAME=${BASE_NAME}:${KITSU_VERSION}
@@ -43,7 +44,7 @@ build:
                 echo Update 'latest' tag
                 docker tag "${IMAGE_NAME}" "${BASE_NAME}:latest"
                 arg="image_url=https://badgen.net/badge/Kitsu%20Version/${KITSU_VERSION//./%2E}/blue?icon=docker"
-                url="https://gitlab.com/api/v4/projects/13202331/badges/42951"
+                url="$PROJECT_API_URL/badges/42951"
                 curl --request PUT --header "PRIVATE-TOKEN: ${BADGE_TOKEN}" --data-urlencode $arg $url
             fi
         - docker image push --all-tags "${BASE_NAME}"
