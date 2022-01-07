@@ -7,13 +7,13 @@ MAINTAINER "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
 
 WORKDIR /app
 
-COPY ./kitsu-dev/*?.?* ./kitsu-dev/.?* .
+COPY ./kitsu-dev/*?.?* ./kitsu-dev/.?* ./
 
 ENV NPM_CACHE_FOLDER=/root/.npm
 RUN --mount=type=cache,id=npm,target=$NPM_CACHE_FOLDER \
     `cp -rf $NPM_CACHE_FOLDER/package-lock.json . || true` &&\
     sed -i '/eslint.*:/d' package.json &&\
-    sed -i '/cypress.*:/d' package.json &&\  # Cypress require special setup to work
+    sed -i '/cypress.*:/d' package.json &&\
     npm install --prefer-offline &&\
     cp -rf package-lock.json $NPM_CACHE_FOLDER
 
