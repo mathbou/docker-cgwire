@@ -41,5 +41,5 @@ ENV FLASK_APP zou.app
 
 WORKDIR ${ZOU_FOLDER}
 
-COPY init_zou.sh /init_zou.sh
-COPY upgrade_zou.sh /upgrade_zou.sh
+COPY ./zou/init_zou.sh /init_zou.sh
+COPY ./zou/upgrade_zou.sh /upgrade_zou.sh
