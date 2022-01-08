@@ -28,3 +28,7 @@ WORKDIR ${ZOU_FOLDER}
 
 COPY init_zou.sh /init_zou.sh
 COPY upgrade_zou.sh /upgrade_zou.sh
+
+# TEMP LINKS
+RUN ln /init_zou.sh ./init_zou.sh &&\
+    ln /upgrade_zou.sh ./upgrade_zou.sh
