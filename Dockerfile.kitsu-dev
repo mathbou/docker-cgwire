@@ -17,4 +17,7 @@ RUN --mount=type=cache,id=npm,target=$NPM_CACHE_FOLDER \
     npm install --prefer-offline &&\
     cp -rf package-lock.json $NPM_CACHE_FOLDER
 
-CMD ["npm", "run", "serve"]
+# REQUIRED To get rid of sockjs error net::ERR_BLOCKED_BY_CLIENT
+RUN sed -i 's/devServer: {/devServer: {public:"0.0.0.0",/' vue.config.js
+
+CMD ["npx", "vue-cli-service", "serve", "--port", "8080" ]
