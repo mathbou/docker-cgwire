@@ -2,38 +2,55 @@
 
 Docker compose for [Kitsu](https://kitsu.cg-wire.com/) and [Zou](https://zou.cg-wire.com/)
 
+[TOC]
+
 ## Usage
 
 ```bash
-bash build.sh
+    build.sh [subcommand] [options]
 ```
 
-#### Use local images
+#### Sub-Commands
 
 ```bash
-bash get_build_dependencies.sh  #clone Kitsu and Zou Dockerfiles into subfolders
-
-bash build.sh -l 
+    local                   Use local build of Kitsu and Zou containers
+    down                    Compose Down the stack
 ```
 
-#### Flags:
+#### Options
 
 ```
-    -l, --local             Use local images
     -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
-    -d, --down              Compose down the stack
+
+        --develop           [local, down] Gives access to running code on the host. Clean DB every time it's rebuild.
+        --keep-db           [local]Keep develop DB data. Should be combined with `--develop`.
+        
     -h, --help              Show this help
 ```
+
+#### Compose-up the stack
+
+```commandline
+bash build.sh
+```
+This will use prebuilt Kitsu and Zou containers, and use the `env` file as settings.
+The setting list for the `env` file can be found [here](https://zou.cg-wire.com/configuration/).
+
+#### Default credentials
+
+* login: admin@example.com
+* password: mysecretpassword
+
 
 ## LDAP
 
 Add your [LDAP variables](https://zou.cg-wire.com/configuration/#ldap) to the env file.
 
 ```bash
-bash ldap_sync.sh
+bash sync_ldap.sh
 ```
 
-#### LDAP flags
+#### LDAP options
 
 ```
     -e, --env=ENV_FILE      Set custom env file, must be the same as the env used with build.sh
@@ -42,19 +59,19 @@ bash ldap_sync.sh
 
 ## DB Upgrade
 
-**[- Be sure to backup your datas before upgrading. -]**
+**[- Be sure to backup your data before upgrading. -]**
 
 ```bash
 # bash db_upgrade [options] oldDbVersion newDbVersion
 
-# PostgreSql 9.5 to 11
+# PostgreSql 10 to 12
 
-bash db_upgrade 9.5 11
+bash db_upgrade 10 12
 ```
 
-Don't forget to update the DB_VERSION key in your 'env' file **after** the upgrade. 
+Don't forget to update the `DB_VERSION` key in your `env` file **after** the upgrade. 
 
-#### DB Upgrade flags
+#### DB Upgrade options
 
 ```
     -e, --env=ENV_FILE      Set custom env file, must be the same as the env used with build.sh
@@ -62,12 +79,69 @@ Don't forget to update the DB_VERSION key in your 'env' file **after** the upgra
     -h, --help              Show this help
 ```
 
-## Default credentials:
+## Build your own images
 
-* login: admin@example.com
-* password: mysecretpassword
+### Get dependencies:
+#### local builds
 
-## About authors
+```bash
+bash get_dependencies.sh  # Clone Kitsu and Zou Dockerfiles into sub-folders
+```
+local build also need those (not required for development stack):
+
+- [jq](https://stedolan.github.io/jq/download/)
+- [curl](https://www.tecmint.com/install-curl-in-linux/)
+
+#### Development builds
+
+```bash
+bash get_dependencies.sh  # Development stack needs standard build dependencies
+bash get_dependencies.sh develop # Clone the official Kitsu and Zou repos from CGwire's Github
+```
+
+#### Update dependencies
+
+The `get_dependencies` script provides flag to update them:
+
+```bash
+get_dependencies --update # Pull the dependencies
+get_dependencies develop --update # Pull the development dependencies
+```
+```bash
+get_dependencies --update --force # Do a `reset --hard` before the pull
+get_dependencies develop --update # Do the same for the development dependencies  
+```
+
+**Even if those flags works with the `develop` sub-command, 
+it's safer to manage the kitsu-dev and zou-dev folders yourself.**
+
+### Build:
+#### Local images
+
+In case you want to modify the images, you'll need the [dependencies](#local-builds), and then build them:
+
+```bash
+bash build.sh local
+```
+
+#### Development images
+
+To actively develop on Kitsu or Zou, you'll need the [dependencies](#development-builds) and a special stack:
+
+```bash
+bash build.sh local --develop
+```
+
+Kitsu and Zou workspaces are then accessible and can be modified from the host while the stack is running. 
+You can found them in the `kitsu-dev` and `zou-dev` folders.
+Depending on the modifications, you may need to restart the containers or relaunch the last command to rebuild them.
+
+To prevent conflict with production stacks, a `-dev` suffix is automatically added to the `COMPOSE_PROJECT_NAME` variable.
+Also, the default exposed port is `8080`, it can be changed by adding `DEV_PORT` variable to you `env` file.
+
+**[- The development DB is wiped out each time you launch the 'build.sh local --develop' command', unless you specify the '--keep-db' option -]**
+
+# About authors
 
 Those Dockerfiles are based on CG Wire work, a company based in France. They help small
 to midsize CG studios to manage their production and build a pipeline

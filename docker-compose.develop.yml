@@ -1,0 +1,36 @@
+version: '3.5'
+
+x-zou-develop: &zou-develop
+    image: zou-dev
+    build:
+        context: .
+        dockerfile: ./zou/Dockerfile.zou-dev
+    volumes:
+        - ./zou-dev:/zou-dev:ro
+
+services:
+    kitsu:
+        image: kitsu-dev
+        build:
+            context: .
+            dockerfile: ./kitsu/Dockerfile.kitsu-dev
+        volumes:
+            - ./kitsu-dev/public:/app/public:ro
+            - ./kitsu-dev/scripts:/app/scripts:ro
+            - ./kitsu-dev/src:/app/src:ro
+            - ./kitsu-dev/tests:/app/tests:ro
+        environment:
+            - KITSU_API_TARGET=http://zou-app:5000
+            - KITSU_EVENT_TARGET=http://zou-event:5001
+        ports:
+            - "${DEV_PORT:-8080}:8080"
+            
+    zou-app:
+        <<: *zou-develop
+        command: "flask run --no-reload --host=0.0.0.0"
+
+    zou-event:
+        <<: *zou-develop
+       
+    zou-jobs:
+        <<: *zou-develop

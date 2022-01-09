@@ -7,8 +7,6 @@ x-zou-build: &zou-build
         context: ./zou
         args:
             ZOU_VERSION: ${ZOU_VERSION:-latest}
-            PREVIEW_FOLDER: ${PREVIEW_FOLDER:?}
-            TMP_DIR: ${TMP_DIR:-/tmp/zou}
 
 services:
     kitsu:

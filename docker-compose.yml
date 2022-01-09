@@ -24,8 +24,6 @@ services:
             - zou-app
             - zou-event
             - zou-jobs
-        ports:
-            - '${PORT:-80}:80'
 
     zou-app:
         <<: *base
