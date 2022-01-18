@@ -50,7 +50,7 @@ for i in "$@"; do
             echo "${CYAN}UPDATE DEPENDENCIES"
             shift
             ;;
-        --reset)
+        --force)
             FORCE=true
             echo "${MAGENTA}/!\\ FORCE UPDATE /!\\ "
             shift
