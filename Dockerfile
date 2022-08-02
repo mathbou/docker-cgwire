@@ -8,7 +8,7 @@ RUN apk add --no-cache make jpeg-dev zlib-dev musl-dev gcc g++ libffi-dev postgr
 ARG PY_V
 ARG ZOU_VERSION
 
-RUN pip install --no-cache-dir --upgrade pip wheel setuptools \
+RUN pip install --no-cache-dir --upgrade pip wheel setuptools==63.2.0 \
     && pip install --no-cache-dir zou==${ZOU_VERSION}   
     
 
