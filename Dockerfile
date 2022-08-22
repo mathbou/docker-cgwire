@@ -8,7 +8,7 @@ RUN apk add --no-cache make jpeg-dev zlib-dev musl-dev gcc g++ libffi-dev postgr
 ARG PY_V
 ARG ZOU_VERSION
 
-RUN pip install --no-cache-dir --upgrade pip wheel setuptools==63.2.0 \
+RUN pip install --no-cache-dir --upgrade pip wheel setuptools \
     && pip install --no-cache-dir zou==${ZOU_VERSION}   
     
 
@@ -28,7 +28,3 @@ WORKDIR ${ZOU_FOLDER}
 
 COPY init_zou.sh /init_zou.sh
 COPY upgrade_zou.sh /upgrade_zou.sh
-
-# TEMP LINKS
-RUN ln /init_zou.sh ./init_zou.sh &&\
-    ln /upgrade_zou.sh ./upgrade_zou.sh
