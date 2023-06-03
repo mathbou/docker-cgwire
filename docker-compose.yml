@@ -68,6 +68,15 @@ services:
         image: redis:alpine
         volumes:
             - 'redis:/data'
+    
+    indexer:
+        <<: *base
+        container_name: ${COMPOSE_PROJECT_NAME:?}-indexer
+        image: getmeili/meilisearch:${INDEXER_VERSION:?}
+        volumes:
+            - 'indexer:/meili_data'
+        environment:
+            - MEILI_MASTER_KEY=${INDEXER_KEY:?}
 
 volumes:
     db:
@@ -78,6 +87,8 @@ volumes:
         name: ${COMPOSE_PROJECT_NAME:?}-previews
     tmp:
         name: ${COMPOSE_PROJECT_NAME:?}-tmp
+    indexer:
+        name: ${COMPOSE_PROJECT_NAME:?}-indexer
         
 networks:
     internal:
