@@ -50,7 +50,7 @@ function build_images() {
 
     if $DEVELOP; then
         COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-        docker-compose -f docker-compose.yml -f docker-compose.develop.yml build --force-rm --pull
+        dc -f docker-compose.yml -f docker-compose.develop.yml build --force-rm --pull
     else
         command -v curl 1>/dev/null || { echo "${ERROR}curl required" && exit 1; }
         command -v jq 1 >/dev/null || { echo "${ERROR}jq required" && exit 1; }
@@ -58,7 +58,7 @@ function build_images() {
         get_kitsu_version
         get_zou_version
         COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-        docker-compose -f docker-compose.yml -f docker-compose.build.yml build --force-rm --pull
+        dc -f docker-compose.yml -f docker-compose.build.yml build --force-rm --pull
     fi
 }
 
@@ -66,26 +66,26 @@ function build_images() {
 function compose_up() {
     echo "${YELLOW}START CONTAINERS"
     if $DEVELOP ; then
-        docker-compose -f docker-compose.yml \
+        dc -f docker-compose.yml \
                        -f docker-compose.develop.yml \
                        up -d
     elif $BUILD ; then
-        docker-compose -f docker-compose.yml \
+        dc -f docker-compose.yml \
                        -f docker-compose.prod.yml \
                        -f docker-compose.build.yml \
                        up -d
     else
-        docker-compose pull --include-deps
-        docker-compose -f docker-compose.yml \
+        dc pull --include-deps
+        dc -f docker-compose.yml \
                        -f docker-compose.prod.yml \
                        up -d
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
-        docker-compose stop zou-jobs
+        dc stop zou-jobs
     fi
     
-    until docker-compose exec -T db pg_isready ; do
+    until dc exec -T db pg_isready ; do
         sleep 3
         echo "${YELLOW}Waiting for db..."
     done
@@ -94,7 +94,7 @@ function compose_up() {
 
 function compose_down() {
     echo "${YELLOW}STOP CONTAINERS"
-    docker-compose down
+    dc down
 }
 
 
@@ -104,16 +104,16 @@ function init_zou() {
 
     if $DEVELOP && ! $KEEP_DB; then
         echo "${MAGENTA}DROP DEV DB"
-        docker-compose exec db  su - postgres -c "dropdb ${dbname}"
+        dc exec db  su - postgres -c "dropdb ${dbname}"
     fi
 
-    if docker-compose exec db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
+    if dc exec db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
         echo "${GREEN}UPGRADE ZOU"
-        docker-compose exec zou-app sh /upgrade_zou.sh
+        dc exec zou-app sh /upgrade_zou.sh
     else
         echo "${GREEN}INIT ZOU"
-        docker-compose exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
-        docker-compose exec zou-app sh /init_zou.sh
+        dc exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        dc exec zou-app sh /init_zou.sh
     fi
 }
 
@@ -178,7 +178,7 @@ for i in "$@"; do
         -e, --env=ENV_FILE      Set custom env file. If not set ./env is used
 
             --develop           [local, down] Gives access to running code on the host. Clean DB every time it's rebuild.
-            --keep-db           [local] Combined with `--develop`. Keep DB data.
+            --keep-db           [local] Combined with '--develop'. Keep DB data.
 
         -h, --help              Show this help
                 "

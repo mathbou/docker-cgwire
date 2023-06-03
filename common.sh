@@ -18,3 +18,12 @@ function source_env() {
     echo "${GREEN}SOURCE ENV${DEFAULT}"
     export $(grep -v '^#' $1 | xargs -L 1)
 }
+
+
+function dc() {
+    if command -v docker-compose &> /dev/null; then
+        docker-compose "$@"
+    else
+        docker compose "$@"
+    fi
+}
