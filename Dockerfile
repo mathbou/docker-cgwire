@@ -1,4 +1,4 @@
-ARG PY_V=3.9
+ARG PY_V=3.11
 
 FROM python:${PY_V}-alpine as builder
 USER root
