@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.3
+# syntax=docker/dockerfile:1.4
 
 ARG NODE_V=16
 FROM node:${NODE_V}-slim
@@ -7,17 +7,18 @@ MAINTAINER "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
 
 WORKDIR /app
 
-COPY ./kitsu-dev/*?.?* ./kitsu-dev/.?* ./
+RUN apt update &&\
+    apt install --yes --no-install-recommends git openssh-client ca-certificates &&\
+    rm -rf /var/lib/apt/lists/*
+
+COPY ./kitsu-dev/*.?* ./
 
 ENV NPM_CACHE_FOLDER=/root/.npm
 RUN --mount=type=cache,id=npm,target=$NPM_CACHE_FOLDER \
     `cp -rf $NPM_CACHE_FOLDER/package-lock.json . || true` &&\
-    sed -i '/eslint.*:/d' package.json &&\
-    sed -i '/cypress.*:/d' package.json &&\
     npm install --prefer-offline &&\
     cp -rf package-lock.json $NPM_CACHE_FOLDER
 
-# REQUIRED To get rid of sockjs error net::ERR_BLOCKED_BY_CLIENT
-RUN sed -i 's/devServer: {/devServer: {public:"0.0.0.0",/' vue.config.js
+RUN sed -i 's/server: {/server: {watch: {usePolling: true},/' vite.config.js
 
-CMD ["npx", "vue-cli-service", "serve", "--port", "8080" ]
+CMD ["npm", "run", "dev", "--", "--host", "--debug", "--port", "8080"]
