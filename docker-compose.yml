@@ -16,8 +16,7 @@ x-backend-volumes: &backend_volumes
 
 services:
     kitsu:
-        <<: *base
-        <<: *env
+        <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME:?}-kitsu
         image: registry.gitlab.com/mathbou/docker-cgwire/kitsu:${KITSU_VERSION:-latest}
         depends_on:
@@ -26,18 +25,15 @@ services:
             - zou-jobs
 
     zou-app:
-        <<: *base
-        <<: *env
+        <<: [*base,*env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-app
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
-        <<: *backend_volumes
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
-        <<: *base
-        <<: *env
+        <<: [*base, *env]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-event
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
@@ -45,11 +41,9 @@ services:
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
 
     zou-jobs:
-        <<: *base
-        <<: *env
+        <<: [*base, *env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
-        <<: *backend_volumes
         command: "rq worker -c zou.job_settings"
 
     db:
