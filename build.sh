@@ -113,6 +113,7 @@ function init_zou() {
     else
         echo "${GREEN}INIT ZOU"
         dc exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
+        dc exec zou-app zou reset-search-index
         dc exec zou-app sh /init_zou.sh
     fi
 }
