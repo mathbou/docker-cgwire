@@ -30,6 +30,7 @@ services:
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         depends_on:
           - db
+          - indexer
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
 
     zou-event:
