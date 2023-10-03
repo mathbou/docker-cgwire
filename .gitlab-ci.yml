@@ -12,6 +12,7 @@ build:
         paths:
             - kitsu_version
     before_script:
+        - apk update
         - apk add curl jq
         - PROJECT_API_URL=$CI_API_V4_URL/projects/$CI_PROJECT_ID
         - |
