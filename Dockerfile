@@ -1,9 +1,12 @@
 ARG PY_V=3.11
 
-FROM python:${PY_V}-alpine as builder
+FROM python:${PY_V}-slim as builder
 USER root
 
-RUN apk add --no-cache make jpeg-dev zlib-dev musl-dev gcc g++ libffi-dev postgresql-dev
+RUN apt update \
+    && apt install -y --no-install-recommends make python3-dev gcc g++ \
+    && apt autoclean \
+    && rm -rf /var/lib/apt/lists/*
 
 ARG PY_V
 ARG ZOU_VERSION
@@ -12,11 +15,14 @@ RUN pip install --no-cache-dir --upgrade pip wheel setuptools \
     && pip install --no-cache-dir zou==${ZOU_VERSION}   
     
 
-FROM python:${PY_V}-alpine
+FROM python:${PY_V}-slim
 MAINTAINER "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
 USER root
 
-RUN apk add --no-cache ffmpeg bzip2 postgresql-libs postgresql-client
+RUN apt update \
+    && apt install -y --no-install-recommends ffmpeg bzip2 postgresql-client \
+    && apt autoclean \
+    && rm -rf /var/lib/apt/lists/*
 
 ARG PY_V
 
