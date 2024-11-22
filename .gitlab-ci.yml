@@ -18,7 +18,7 @@ build:
         - |
             if [ ! $KITSU_VERSION ]; then
                 curl https://api.github.com/repos/cgwire/kitsu/git/refs/tags > tags.json
-                export KITSU_VERSION=`cat ./tags.json | jq '.[-1].ref' | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+"`
+                export KITSU_VERSION=`cat ./tags.json | jq '.[-1].ref' | grep -Po '([0-9]+\.[0-9]+\.[0-9]+.*?)(?=-build)'`
                 rm tags.json
             else
                 export MANUAL=1
