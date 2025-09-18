@@ -17,7 +17,7 @@ build:
         - PROJECT_API_URL=$CI_API_V4_URL/projects/$CI_PROJECT_ID
         - |
             if [ ! $ZOU_VERSION ]; then
-                curl https://api.github.com/repos/cgwire/zou/tags > tags.json
+                curl https://api.github.com/repos/cgwire/zou/tags?per_page=5 > tags.json
                 export ZOU_VERSION=`cat ./tags.json | jq -r '.[0].name[1:]'`
             else
                 export MANUAL=1
