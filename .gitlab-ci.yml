@@ -8,6 +8,7 @@ services:
 build:
     image: docker:latest
     stage: build
+    timeout: 5 minutes
     cache:
         paths:
             - zou_version
@@ -51,10 +52,11 @@ build:
        
             
 include:
-    - template: Container-Scanning.gitlab-ci.yml
+  - template: Jobs/Container-Scanning.gitlab-ci.yml
     
     
 container_scanning:
+    timeout: 5 minutes
     cache:
         paths:
             - zou_version
