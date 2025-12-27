@@ -50,7 +50,7 @@ services:
         container_name: ${COMPOSE_PROJECT_NAME:?}-db-${DB_VERSION:?}
         image: postgres:${DB_VERSION:?}-alpine
         volumes:
-            - 'db:/var/lib/postgresql/data'
+            - 'db:${DB_DATA_PATH:?}'
             - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION:?}/main/pg_ctl.conf:ro
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD:?}

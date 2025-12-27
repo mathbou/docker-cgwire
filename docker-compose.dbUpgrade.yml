@@ -9,7 +9,8 @@ services:
         container_name: ${COMPOSE_PROJECT_NAME:?}-db-${OLD_VERSION:?}
         image: postgres:${OLD_VERSION:?}-alpine
         volumes:
-            - 'oldDb:/var/lib/postgresql/data'
+            - 'oldDb:${OLD_DB_DATA_PATH:?}'
+            - "sharedDbTmp:/tmp"
         environment:
             - POSTGRES_HOST_AUTH_METHOD=trust
     new-db:
@@ -17,7 +18,8 @@ services:
         container_name: ${COMPOSE_PROJECT_NAME:?}-db-${NEW_VERSION:?}
         image: postgres:${NEW_VERSION:?}-alpine
         volumes:
-            - 'newDb:/var/lib/postgresql/data'
+            - 'newDb:${NEW_DB_DATA_PATH:?}'
+            - "sharedDbTmp:/tmp"
         environment:
             - POSTGRES_HOST_AUTH_METHOD=trust
 
@@ -26,6 +28,8 @@ volumes:
         name: ${COMPOSE_PROJECT_NAME:?}-db-${OLD_VERSION:?}
     newDb:
         name: ${COMPOSE_PROJECT_NAME:?}-db-${NEW_VERSION:?}
+    sharedDbTmp:
+        name: ${COMPOSE_PROJECT_NAME:?}-db-tmp
 
 networks:
     internal:

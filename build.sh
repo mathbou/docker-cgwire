@@ -118,6 +118,15 @@ function init_zou() {
     fi
 }
 
+function set_db_data_path {
+  if [[ ${DB_VERSION:?} -lt 18 ]]; then
+    export DB_DATA_PATH='/var/lib/postgresql/data'
+  else
+    export DB_DATA_PATH='/var/lib/postgresql'
+  fi
+  echo "${CYAN}SET DB_DATA_PATH (v${DB_VERSION}) to ${DB_DATA_PATH}"
+}
+
 # --------------------------------------------------------------
 # ---------------------------- ARGS ----------------------------
 # --------------------------------------------------------------
@@ -211,6 +220,8 @@ fi
 compose_down
 
 if ! $DOWN ; then
+    set_db_data_path
+
     if $BUILD ; then
         build_images
     fi

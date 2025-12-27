@@ -1,3 +1,17 @@
+#!/usr/bin/env bash
+
+function get_db_data_path {
+  if [[ $1 -lt 18 ]]; then
+    builtin echo '/var/lib/postgresql/data'
+  else
+    builtin echo '/var/lib/postgresql'
+  fi
+}
+
+# --------------------------------------------------------------
+# ---------------------------- ARGS ----------------------------
+# --------------------------------------------------------------
+
 source common.sh
 
 DRY=0
@@ -56,10 +70,15 @@ function db-compose() {
 
 source_env ${ENV_FILE}
 
-bash ./build.sh -d -e=${ENV_FILE} 
-db-compose up -d
+bash ./build.sh down -e=${ENV_FILE}
 
-sleep 1
+export OLD_DB_DATA_PATH=$(get_db_data_path ${OLD_VERSION})
+echo "${CYAN}SET OLD_DB_DATA_PATH (v${OLD_VERSION}) to ${OLD_DB_DATA_PATH}"
+
+export NEW_DB_DATA_PATH=$(get_db_data_path ${NEW_VERSION})
+echo "${CYAN}SET NEW_DB_DATA_PATH (v${NEW_VERSION}) to ${NEW_DB_DATA_PATH}"
+
+db-compose up -d --wait
 
 until db-compose exec -T old-db pg_isready ; do
 	sleep 3
@@ -75,10 +94,11 @@ if [ $DRY == 1 ]; then
     echo "${MAGENTA}Dry import to $NEW_VERSION"
 else
     echo "${GREEN}Dump from $OLD_VERSION"
-    db-compose exec -T old-db pg_dumpall -U postgres > dump.sql
+    db-compose exec -T old-db pg_dumpall -U postgres -f /tmp/dump.sql
 
     echo "${GREEN}Import to $NEW_VERSION"
-    db-compose exec -T new-db psql -U postgres < dump.sql
+    db-compose exec -T new-db psql -U postgres -f /tmp/dump.sql
 fi
 
 db-compose down
+docker volume rm ${COMPOSE_PROJECT_NAME:?}-db-tmp
