@@ -1,5 +1,3 @@
-version: '3.5'
-
 x-zou-develop: &zou-develop
     image: zou-dev
     build:

@@ -1,6 +1,3 @@
-version: '3.5'
-
-
 x-zou-build: &zou-build
     image: zou:${ZOU_VERSION:-latest}
     build:
