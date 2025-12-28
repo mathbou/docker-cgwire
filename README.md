@@ -67,7 +67,7 @@ bash sync_ldap.sh
 
 # PostgreSql 10 to 12
 
-bash db_upgrade 10 12
+bash db_upgrade.sh 10 12
 ```
 
 > [!important]
@@ -80,6 +80,42 @@ bash db_upgrade 10 12
     -d, --dry-run           
     -h, --help             # Show this help
 ```
+
+## Indexer Upgrade
+
+> [!caution]
+> It won't work for Meilisearch < 1.12, see below.
+
+```shell
+# bash indexer_upgrade [options] oldIdxVersion newIdxVersion
+
+# Meilisearch v1.12.0 to v1.31
+
+bash indexer_upgrade.sh 1.12.0 1.31
+```
+
+> [!important]
+> Don't forget to update the `INDEXER_VERSION` key in your `env` file **after** the upgrade. 
+
+#### Indexer Upgrade options
+
+```shell
+    -e, --env=ENV_FILE     # Set custom env file, must be the same as the env used with build.sh
+    -d, --dry-run           
+    -h, --help             # Show this help
+```
+
+### Meilisearch 1.12 or below
+
+The indexer upgrade relies on the dump-less upgrade feature introduced in v1.12. 
+
+For indexer version below 1.12, the official [process](https://www.meilisearch.com/docs/learn/update_and_migration/updating#updating-a-self-hosted-meilisearch-instance) is quite cumbersome. 
+An easier (and probably faster) way is simply to update the indexer and recreate the index data from scratch:
+
+- Update the `INDEXER_VERSION` of your `env` file
+- relaunch the stack with the `build.sh` script
+- When the stack is up, use `docker exec cgwire-zou-app zou reset-search-index`
+  - If you changed the `COMPOSE_PROJECT_NAME`, replace `cgwire-zou-app` with your zou-app container name
 
 ## Build your own images
 

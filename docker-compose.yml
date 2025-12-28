@@ -72,7 +72,7 @@ services:
     
     indexer:
         <<: *base
-        container_name: ${COMPOSE_PROJECT_NAME:?}-indexer
+        container_name: ${COMPOSE_PROJECT_NAME:?}-indexer-${INDEXER_VERSION:?}
         image: getmeili/meilisearch:${INDEXER_VERSION:?}
         volumes:
             - 'indexer:/meili_data'
@@ -91,7 +91,7 @@ volumes:
     tmp:
         name: ${COMPOSE_PROJECT_NAME:?}-tmp
     indexer:
-        name: ${COMPOSE_PROJECT_NAME:?}-indexer
+        name: ${COMPOSE_PROJECT_NAME:?}-indexer-${INDEXER_VERSION:?}
         
 networks:
     internal:

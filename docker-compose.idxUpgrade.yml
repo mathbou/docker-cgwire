@@ -1,0 +1,25 @@
+services:
+    copier:
+        container_name: ${COMPOSE_PROJECT_NAME:?}-copier
+        image: alpine
+        volumes:
+            - 'oldIdx:/old_meili_data'
+            - 'newIdx:/meili_data'
+        command: tail -f /dev/null
+
+    new-indexer:
+        restart: always
+        container_name: ${COMPOSE_PROJECT_NAME:?}-indexer-${NEW_VERSION:?}
+        image: getmeili/meilisearch:${NEW_VERSION:?}
+        volumes:
+            - 'newIdx:/meili_data'
+        environment:
+            - MEILI_EXPERIMENTAL_DUMPLESS_UPGRADE=true
+        healthcheck:
+            test: "curl -s -f http://localhost:${INDEXER_PORT:-7700}/health | grep -q '{\"status\":\"available\"}'"
+
+volumes:
+    oldIdx:
+        name: ${COMPOSE_PROJECT_NAME:?}-indexer-${OLD_VERSION:?}
+    newIdx:
+        name: ${COMPOSE_PROJECT_NAME:?}-indexer-${NEW_VERSION:?}
