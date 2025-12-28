@@ -1,4 +1,4 @@
-ARG PY_V=3.11
+ARG PY_V=3.13
 
 FROM python:${PY_V}-slim as builder
 USER root
