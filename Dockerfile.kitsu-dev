@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-ARG NODE_V=16
+ARG NODE_V=24
 FROM node:${NODE_V}-slim
 
 MAINTAINER "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
