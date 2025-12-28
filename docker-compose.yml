@@ -30,6 +30,8 @@ services:
           - db
           - indexer
         command: "gunicorn --error-logfile - --access-logfile - -w 3 -k gevent -b :5000 zou.app:app"
+        healthcheck:
+            test: "curl -s -f http://localhost:5000 | grep -q '\"api\":\"Zou\"'"
 
     zou-event:
         <<: [*base, *env]
@@ -38,12 +40,16 @@ services:
         depends_on:
           - redis
         command: "gunicorn --error-logfile - --access-logfile - -w 1 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -b :5001 zou.event_stream:app"
+        healthcheck:
+            test: "curl -s -f http://localhost:5001 | grep -q '\"api\":\"Zou\"'"
 
     zou-jobs:
         <<: [*base, *env, *backend_volumes]
         container_name: ${COMPOSE_PROJECT_NAME:?}-zou-jobs
         image: registry.gitlab.com/mathbou/docker-cgwire/zou:${ZOU_VERSION:-latest}
         command: "rq worker -c zou.job_settings"
+        healthcheck:
+            test: "rq info -u redis://${KV_HOST:?}:${KV_PORT:-6379}/3 -W | grep -v -q '0 workers'"
 
     db:
         <<: *base
@@ -54,6 +60,8 @@ services:
             - ./db/pg_ctl.conf:/etc/postgresql/${DB_VERSION:?}/main/pg_ctl.conf:ro
         environment:
             - POSTGRES_PASSWORD=${DB_PASSWORD:?}
+        healthcheck:
+            test: "pg_isready -d zoudb -U postgres"
 
     redis:
         <<: *base
@@ -70,6 +78,8 @@ services:
             - 'indexer:/meili_data'
         environment:
             - MEILI_MASTER_KEY=${INDEXER_KEY:?}
+        healthcheck:
+            test: "curl -s -f http://localhost:${INDEXER_PORT:-7700}/health | grep -q '{\"status\":\"available\"}'"
 
 volumes:
     db:

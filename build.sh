@@ -68,17 +68,17 @@ function compose_up() {
     if $DEVELOP ; then
         dc -f docker-compose.yml \
                        -f docker-compose.develop.yml \
-                       up -d
+                       up -d --wait
     elif $BUILD ; then
         dc -f docker-compose.yml \
                        -f docker-compose.prod.yml \
                        -f docker-compose.build.yml \
-                       up -d
+                       up -d --wait
     else
         dc pull --include-deps
         dc -f docker-compose.yml \
                        -f docker-compose.prod.yml \
-                       up -d
+                       up -d --wait
     fi
     if [[ "${ENABLE_JOB_QUEUE}" != "True" ]]; then
         echo "${YELLOW}DISABLE ZOU ASYNC JOBS"
