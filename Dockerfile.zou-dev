@@ -3,11 +3,13 @@
 ARG PY_V=3.13
 ARG ZOU_FOLDER=/zou-dev
 
-FROM python:${PY_V}-alpine AS builder
+FROM python:${PY_V}-slim AS builder
 USER root
 
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk add make jpeg-dev zlib-dev musl-dev gcc g++ libffi-dev postgresql-dev
+RUN apt update \
+    && apt install -y --no-install-recommends make python3-dev gcc g++ \
+    && apt autoclean \
+    && rm -rf /var/lib/apt/lists/*
 
 ARG PY_V
 ARG ZOU_FOLDER
@@ -19,7 +21,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     && pip install -e . \
     && python setup.py egg_info --egg-base=/usr/local/lib/python${PY_V}/site-packages
 
-FROM python:${PY_V}-alpine
+FROM python:${PY_V}-slim
 
 LABEL org.opencontainers.image.authors="Mathieu Bouzard <mathieu.bouzard@gmail.com>"
 LABEL org.opencontainers.image.source="https://gitlab.com/mathbou/docker-cgwire/-/tree/zou"
@@ -28,8 +30,10 @@ LABEL org.opencontainers.image.title="Zou"
 
 USER root
 
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk add curl ffmpeg bzip2 postgresql-libs postgresql-client
+RUN apt update \
+    && apt install -y --no-install-recommends curl ffmpeg bzip2 postgresql-client \
+    && apt autoclean \
+    && rm -rf /var/lib/apt/lists/*
 
 ARG PY_V
 
