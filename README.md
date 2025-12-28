@@ -4,7 +4,7 @@ Docker compose for [Kitsu](https://kitsu.cg-wire.com/) and [Zou](https://zou.cg-
 
 [TOC]
 
-## Usage
+## 👨‍💻 Usage
 
 ```shell
     build.sh [subcommand] [options]
@@ -42,7 +42,7 @@ The setting list for the `env` file can be found [here](https://zou.cg-wire.com/
 * password: mysecretpassword
 
 
-## LDAP
+## 👨‍👩‍👧‍👦 LDAP
 
 Add your [LDAP variables](https://zou.cg-wire.com/configuration/#ldap) to the env file.
 
@@ -57,7 +57,7 @@ bash sync_ldap.sh
     -h, --help             # Show this help
 ```
 
-## DB Upgrade
+## ⬆️ DB Upgrade
 
 > [!caution]
 > Be sure to backup your data before upgrading.
@@ -81,7 +81,7 @@ bash db_upgrade.sh 10 12
     -h, --help             # Show this help
 ```
 
-## Indexer Upgrade
+## ⬆️ Indexer Upgrade
 
 > [!caution]
 > It won't work for Meilisearch < 1.12, see below.
@@ -117,7 +117,7 @@ An easier (and probably faster) way is simply to update the indexer and recreate
 - When the stack is up, use `docker exec cgwire-zou-app zou reset-search-index`
   - If you changed the `COMPOSE_PROJECT_NAME`, replace `cgwire-zou-app` with your zou-app container name
 
-## Build your own images
+## 🔧 Build your own images
 
 ### Get dependencies:
 #### local builds
