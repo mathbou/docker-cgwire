@@ -1,6 +1,6 @@
 ARG PY_V=3.13
 
-FROM python:${PY_V}-slim as builder
+FROM python:${PY_V}-slim AS builder
 USER root
 
 RUN apt update \
@@ -16,11 +16,19 @@ RUN pip install --no-cache-dir --upgrade pip wheel setuptools \
     
 
 FROM python:${PY_V}-slim
-MAINTAINER "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
+
+ARG ZOU_VERSION
+
+LABEL org.opencontainers.image.version=${ZOU_VERSION}
+LABEL org.opencontainers.image.authors="Mathieu Bouzard <mathieu.bouzard@gmail.com>"
+LABEL org.opencontainers.image.source="https://gitlab.com/mathbou/docker-cgwire/-/tree/zou"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+LABEL org.opencontainers.image.title="Zou"
+
 USER root
 
 RUN apt update \
-    && apt install -y --no-install-recommends ffmpeg bzip2 postgresql-client \
+    && apt install -y --no-install-recommends curl ffmpeg bzip2 postgresql-client \
     && apt autoclean \
     && rm -rf /var/lib/apt/lists/*
 

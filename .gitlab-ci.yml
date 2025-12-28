@@ -36,7 +36,7 @@ build:
         - export IMAGE_NAME=${BASE_NAME}:${ZOU_VERSION}
     script:
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-        - docker build --build-arg ZOU_VERSION=${ZOU_VERSION} --pull -t "${IMAGE_NAME}" .
+        - docker build --label org.opencontainers.image.created=$(date -u +%Y-%m-%dT%H:%M:%SZ) --build-arg ZOU_VERSION=${ZOU_VERSION} --pull -t "${IMAGE_NAME}" .
         - |
             if [ ! $MANUAL ]; then
                 echo Update 'latest' tag
