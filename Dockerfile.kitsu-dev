@@ -3,7 +3,10 @@
 ARG NODE_V=24
 FROM node:${NODE_V}-slim
 
-MAINTAINER "Mathieu Bouzard <mathieu.bouzard@gmail.com>"
+LABEL org.opencontainers.image.authors="Mathieu Bouzard <mathieu.bouzard@gmail.com>"
+LABEL org.opencontainers.image.source="https://gitlab.com/mathbou/docker-cgwire/-/tree/kitsu"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+LABEL org.opencontainers.image.title="Kitsu"
 
 WORKDIR /app
 
