@@ -17,7 +17,7 @@ function get_build_dependency() {
 
 function get_develop_dependency(){
     echo "${MAGENTA}GET $1 develop dependencies"
-    git clone -b master https://github.com/cgwire/$1.git $SWD/$1-dev || :
+    git clone -b main https://github.com/cgwire/$1.git $SWD/$1-dev || :
 
     if $FORCE && $UPDATE; then
         git -C $SWD/$1-dev reset --hard || :
