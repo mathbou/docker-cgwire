@@ -85,7 +85,7 @@ function compose_up() {
         dc stop zou-jobs
     fi
     
-    until dc exec -T db pg_isready ; do
+    until dc exec -T db pg_isready -d zoudb -U postgres ; do
         sleep 3
         echo "${YELLOW}Waiting for db..."
     done
@@ -104,17 +104,17 @@ function init_zou() {
 
     if $DEVELOP && ! $KEEP_DB; then
         echo "${MAGENTA}DROP DEV DB"
-        dc exec db  su - postgres -c "dropdb ${dbname}"
+        dc exec db dropdb -U ${dbowner} -f ${dbname}
     fi
 
-    if dc exec db psql -U ${dbowner} ${dbname} -c '' 2>&1; then
+    if dc exec db psql -U ${dbowner} ${dbname} -c '' >/dev/null 2>&1; then
         echo "${GREEN}UPGRADE ZOU"
         dc exec zou-app sh /upgrade_zou.sh
     else
         echo "${GREEN}INIT ZOU"
-        dc exec db  su - postgres -c "createdb -T template0 -E UTF8 --owner ${dbowner} ${dbname}"
-        dc exec zou-app zou reset-search-index
+        dc exec db createdb -U ${dbowner} -T template0 -E UTF8 --owner ${dbowner} ${dbname}
         dc exec zou-app sh /init_zou.sh
+        dc exec zou-app zou reset-search-index
     fi
 }
 
