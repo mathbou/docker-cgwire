@@ -4,15 +4,22 @@ FROM python:${PY_V}-slim AS builder
 USER root
 
 RUN apt update \
-    && apt install -y --no-install-recommends make python3-dev gcc g++ \
+    && apt install -y --no-install-recommends make python3-dev gcc g++ git \
     && apt autoclean \
     && rm -rf /var/lib/apt/lists/*
 
 ARG PY_V
 ARG ZOU_VERSION
 
+# https://github.com/numberly/matterhook/issues/10
+RUN git -C /tmp clone https://github.com/numberly/matterhook.git \
+    && git -C /tmp/matterhook checkout 0.2 \
+    && sed -i '8d;38,41d' /tmp/matterhook/setup.py \
+    && cat /tmp/matterhook/setup.py
+
 RUN pip install --no-cache-dir --upgrade pip wheel setuptools \
-    && pip install --no-cache-dir zou==${ZOU_VERSION}   
+    && pip install --no-cache-dir /tmp/matterhook \
+    && pip install --no-cache-dir zou==${ZOU_VERSION}
     
 
 FROM python:${PY_V}-slim
@@ -37,7 +44,7 @@ ARG PY_V
 COPY --from=builder /usr/local/lib/python${PY_V} /usr/local/lib/python${PY_V}
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-ENV ZOU_FOLDER /usr/local/lib/python${PY_V}/site-packages/zou
+ENV ZOU_FOLDER=/usr/local/lib/python${PY_V}/site-packages/zou
 WORKDIR ${ZOU_FOLDER}
 
 COPY init_zou.sh /init_zou.sh
