@@ -4,21 +4,14 @@ FROM python:${PY_V}-slim AS builder
 USER root
 
 RUN apt update \
-    && apt install -y --no-install-recommends make python3-dev gcc g++ git \
+    && apt install -y --no-install-recommends make python3-dev gcc g++ \
     && apt autoclean \
     && rm -rf /var/lib/apt/lists/*
 
 ARG PY_V
 ARG ZOU_VERSION
 
-# https://github.com/numberly/matterhook/issues/10
-RUN git -C /tmp clone https://github.com/numberly/matterhook.git \
-    && git -C /tmp/matterhook checkout 0.2 \
-    && sed -i '8d;38,41d' /tmp/matterhook/setup.py \
-    && cat /tmp/matterhook/setup.py
-
 RUN pip install --no-cache-dir --upgrade pip wheel setuptools \
-    && pip install --no-cache-dir /tmp/matterhook \
     && pip install --no-cache-dir zou==${ZOU_VERSION}
     
 
